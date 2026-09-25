@@ -15,11 +15,12 @@ import {
   Trophy,
   Film,
   Hourglass,
-  CheckCircle,
+  Check,
   AlertCircle,
-  Sparkles,
   ArrowRight,
-  BookOpen
+  BookOpen,
+  Terminal,
+  Save
 } from 'lucide-react';
 
 interface Category {
@@ -28,18 +29,17 @@ interface Category {
   description?: string;
 }
 
-// Map category names to icons for rich visual UI
 const categoryIcons: Record<string, React.ReactNode> = {
-  Technology: <Cpu className="h-5 w-5" />,
-  Science: <FlaskConical className="h-5 w-5" />,
-  Business: <Briefcase className="h-5 w-5" />,
-  World: <Globe className="h-5 w-5" />,
-  Politics: <Landmark className="h-5 w-5" />,
-  Health: <HeartPulse className="h-5 w-5" />,
-  Finance: <Coins className="h-5 w-5" />,
-  Sports: <Trophy className="h-5 w-5" />,
-  Entertainment: <Film className="h-5 w-5" />,
-  History: <Hourglass className="h-5 w-5" />,
+  Technology: <Cpu className="h-4 w-4" />,
+  Science: <FlaskConical className="h-4 w-4" />,
+  Business: <Briefcase className="h-4 w-4" />,
+  World: <Globe className="h-4 w-4" />,
+  Politics: <Landmark className="h-4 w-4" />,
+  Health: <HeartPulse className="h-4 w-4" />,
+  Finance: <Coins className="h-4 w-4" />,
+  Sports: <Trophy className="h-4 w-4" />,
+  Entertainment: <Film className="h-4 w-4" />,
+  History: <Hourglass className="h-4 w-4" />,
 };
 
 const defaultCategoryList = [
@@ -88,7 +88,6 @@ export default function TopicsPage() {
 
       let loadedCategories: Category[] = catData || [];
 
-      // If categories table is empty or error, use standard categories list
       if (!catData || catData.length === 0) {
         console.warn('No categories found from Supabase, using standard categories list.');
         loadedCategories = defaultCategoryList.map((name, i) => ({
@@ -139,7 +138,7 @@ export default function TopicsPage() {
     setMessage(null);
 
     try {
-      // 1. Delete removed categories
+      // 1. Delete old selections
       const { error: deleteError } = await supabase
         .from('user_categories')
         .delete()
@@ -147,7 +146,7 @@ export default function TopicsPage() {
 
       if (deleteError) throw deleteError;
 
-      // 2. Insert new selected categories
+      // 2. Insert new selections
       if (selectedCategoryIds.size > 0) {
         const rowsToInsert = Array.from(selectedCategoryIds).map((catId) => ({
           user_id: userId,
@@ -162,9 +161,9 @@ export default function TopicsPage() {
         if (insertError) throw insertError;
       }
 
-      setMessage({ type: 'success', text: 'Interests saved successfully!' });
+      setMessage({ type: 'success', text: 'TOPIC_PREFERENCES_SAVED_SUCCESSFULLY' });
     } catch (err: unknown) {
-      const text = err instanceof Error ? err.message : 'Failed to save interests.';
+      const text = err instanceof Error ? err.message : 'FAILED_TO_SAVE_PREFERENCES';
       setMessage({ type: 'error', text });
     } finally {
       setSaving(false);
@@ -173,107 +172,118 @@ export default function TopicsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col">
+      <div className="min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-1 flex items-center justify-center p-4">
-          <div className="text-slate-500 font-medium animate-pulse">Loading topics & interests...</div>
+          <div className="font-mono text-xs uppercase tracking-widest text-stone-500 animate-pulse">
+            [SYS_QUERY] Fetching taxonomy & user interests...
+          </div>
         </main>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-1 max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 border-b border-stone-300 pb-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-700 bg-amber-100/70 px-2.5 py-1 rounded-full mb-2">
-              <BookOpen className="h-3.5 w-3.5" />
-              <span>Step 5: Topic System</span>
+            <div className="inline-flex items-center gap-1.5 font-mono text-[10px] text-stone-500 uppercase tracking-widest mb-1.5">
+              <Terminal className="h-3 w-3" />
+              <span>STEP: 05 // TAXONOMY_SUBSCRIPTIONS</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Choose Your Topics</h1>
-            <p className="text-sm text-slate-500 mt-1">
-              Select the subjects you want NUGGET to turn into your daily verified learning feed.
+            <h1 className="font-mono text-2xl sm:text-3xl font-black text-stone-900 uppercase tracking-tight">
+              INTEREST_SELECTION
+            </h1>
+            <p className="text-xs text-stone-500 mt-1 font-sans">
+              Select primary categories to route daily multi-source briefing nuggets to your ledger.
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button
               onClick={handleSave}
               disabled={saving}
-              className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-amber-600 disabled:opacity-50 transition"
+              className="inline-flex items-center gap-1.5 rounded border border-stone-900 bg-stone-900 px-4 py-2 font-mono text-xs font-bold text-white shadow-2xs hover:bg-stone-800 disabled:opacity-50 transition uppercase tracking-wider"
             >
-              <Sparkles className="h-4 w-4" />
-              <span>{saving ? 'Saving...' : 'Save Interests'}</span>
+              <Save className="h-3.5 w-3.5" />
+              <span>{saving ? 'SAVING...' : 'SAVE_SELECTION'}</span>
             </button>
             <button
               onClick={() => router.push('/')}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition"
+              className="inline-flex items-center gap-1.5 rounded border border-stone-300 bg-white px-3 py-2 font-mono text-xs font-semibold text-stone-700 hover:bg-stone-50 transition uppercase tracking-wider"
             >
-              <span>Done</span>
-              <ArrowRight className="h-4 w-4" />
+              <span>DASHBOARD</span>
+              <ArrowRight className="h-3.5 w-3.5" />
             </button>
           </div>
         </div>
 
         {message && (
           <div
-            className={`mb-6 flex items-center gap-2 rounded-xl p-4 text-sm ${
+            className={`mb-6 flex items-center gap-2 rounded border p-3 font-mono text-xs ${
               message.type === 'success'
-                ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                : 'bg-rose-50 text-rose-800 border border-rose-200'
+                ? 'border-emerald-300 bg-emerald-50/80 text-emerald-800'
+                : 'border-rose-300 bg-rose-50/80 text-rose-800'
             }`}
           >
             {message.type === 'success' ? (
-              <CheckCircle className="h-5 w-5 shrink-0 text-emerald-600" />
+              <Check className="h-4 w-4 shrink-0 text-emerald-600" />
             ) : (
-              <AlertCircle className="h-5 w-5 shrink-0 text-rose-600" />
+              <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
             )}
-            <span>{message.text}</span>
+            <span>[{message.text}]</span>
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {categories.map((cat) => {
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {categories.map((cat, index) => {
             const isSelected = selectedCategoryIds.has(cat.id);
-            const icon = categoryIcons[cat.name] || <BookOpen className="h-5 w-5" />;
+            const icon = categoryIcons[cat.name] || <BookOpen className="h-4 w-4" />;
+            const indexStr = String(index + 1).padStart(2, '0');
 
             return (
               <div
                 key={cat.id}
                 onClick={() => toggleCategory(cat.id)}
-                className={`relative cursor-pointer rounded-2xl p-5 border transition-all select-none ${
+                className={`relative cursor-pointer rounded-xl p-4 border transition-all select-none ${
                   isSelected
-                    ? 'bg-amber-50/60 border-amber-300 ring-2 ring-amber-400/30 shadow-sm'
-                    : 'bg-white border-slate-200/80 hover:border-slate-300 shadow-sm'
+                    ? 'border-stone-900 bg-white shadow-xs ring-1 ring-stone-900'
+                    : 'border-stone-200 bg-white/80 hover:border-stone-400 hover:bg-white'
                 }`}
               >
                 <div className="flex items-start justify-between">
-                  <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-xl transition ${
-                      isSelected
-                        ? 'bg-amber-500 text-white shadow-sm shadow-amber-200'
-                        : 'bg-slate-100 text-slate-600'
-                    }`}
-                  >
-                    {icon}
+                  <div className="flex items-center gap-2">
+                    <div
+                      className={`flex h-7 w-7 items-center justify-center rounded border transition ${
+                        isSelected
+                          ? 'border-stone-900 bg-stone-900 text-white'
+                          : 'border-stone-200 bg-stone-100 text-stone-600'
+                      }`}
+                    >
+                      {icon}
+                    </div>
+                    <span className="font-mono text-[11px] text-stone-600">[{indexStr}]</span>
                   </div>
+
                   <div
-                    className={`flex h-6 w-6 items-center justify-center rounded-full border transition ${
+                    className={`flex h-5 w-5 items-center justify-center rounded border font-mono text-[10px] transition ${
                       isSelected
-                        ? 'bg-amber-500 border-amber-500 text-white'
-                        : 'border-slate-300 bg-white'
+                        ? 'border-stone-900 bg-stone-900 text-white font-bold'
+                        : 'border-stone-300 bg-white text-transparent'
                     }`}
                   >
-                    {isSelected && <CheckCircle className="h-4 w-4" />}
+                    <Check className="h-3 w-3" />
                   </div>
                 </div>
 
-                <div className="mt-4">
-                  <h3 className="font-semibold text-slate-900 text-base">{cat.name}</h3>
-                  <p className="text-xs text-slate-500 mt-1 line-clamp-2">
-                    {cat.description || `Curated, verified nuggets in ${cat.name.toLowerCase()}.`}
+                <div className="mt-3">
+                  <h3 className="font-mono text-sm font-bold text-stone-900 uppercase tracking-tight">
+                    {cat.name}
+                  </h3>
+                  <p className="text-[11px] text-stone-500 mt-1 line-clamp-2 font-sans">
+                    {cat.description || `Curated, verified daily nuggets in ${cat.name.toLowerCase()}.`}
                   </p>
                 </div>
               </div>
@@ -281,25 +291,20 @@ export default function TopicsPage() {
           })}
         </div>
 
-        <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h3 className="font-semibold text-slate-900">
-                Selected {selectedCategoryIds.size} of {categories.length} Topics
-              </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
-                We use these topics to populate &quot;Today&apos;s Nuggets&quot; on your daily feed.
-              </p>
-            </div>
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-amber-600 disabled:opacity-50 transition"
-            >
-              <Sparkles className="h-4 w-4" />
-              <span>{saving ? 'Saving...' : 'Save Interests'}</span>
-            </button>
+        {/* Ledger Bottom Summary */}
+        <div className="mt-6 rounded-xl border border-stone-200 bg-white p-4 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="font-mono text-xs text-stone-600">
+            TOTAL_SELECTED: <span className="font-bold text-stone-900">{selectedCategoryIds.size}</span> OF{' '}
+            <span className="font-bold text-stone-900">{categories.length}</span> TOPICS
           </div>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="inline-flex items-center justify-center gap-1.5 rounded border border-stone-900 bg-stone-900 px-4 py-2 font-mono text-xs font-bold text-white shadow-2xs hover:bg-stone-800 disabled:opacity-50 transition uppercase tracking-wider"
+          >
+            <Save className="h-3.5 w-3.5" />
+            <span>{saving ? 'SAVING...' : 'COMMIT_SELECTION'}</span>
+          </button>
         </div>
       </main>
     </div>

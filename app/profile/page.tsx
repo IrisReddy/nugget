@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Navbar from '@/components/Navbar';
-import { Save, CheckCircle, AlertCircle, Award, Flame, Calendar } from 'lucide-react';
+import { Save, Check, AlertCircle, Award, Flame, Calendar, Terminal } from 'lucide-react';
 
 interface ProfileData {
   id: string;
@@ -54,7 +54,6 @@ export default function ProfilePage() {
         setUsername(data.username || '');
         setDisplayName(data.display_name || '');
       } else {
-        // Fallback if record does not yet exist
         const initialProfile: ProfileData = {
           id: user.id,
           username: user.email?.split('@')[0] || '',
@@ -95,10 +94,10 @@ export default function ProfilePage() {
 
       if (error) throw error;
 
-      setStatusMessage({ type: 'success', text: 'Profile saved successfully!' });
+      setStatusMessage({ type: 'success', text: 'PROFILE_UPDATED_SUCCESSFULLY' });
       setProfile((prev) => (prev ? { ...prev, username, display_name: displayName } : null));
     } catch (err: unknown) {
-      const text = err instanceof Error ? err.message : 'Failed to update profile.';
+      const text = err instanceof Error ? err.message : 'FAILED_TO_UPDATE_PROFILE';
       setStatusMessage({ type: 'error', text });
     } finally {
       setSaving(false);
@@ -107,89 +106,97 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col">
+      <div className="min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-1 flex items-center justify-center p-4">
-          <div className="text-slate-500 font-medium animate-pulse">Loading profile...</div>
+          <div className="font-mono text-xs uppercase tracking-widest text-stone-500 animate-pulse">
+            [SYS_QUERY] Fetching researcher profile...
+          </div>
         </main>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-1 max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8">
-        <div className="mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Your Profile</h1>
-          <p className="text-sm text-slate-500 mt-1">Manage your account identity and view your learning stats</p>
+        <div className="mb-6 border-b border-stone-300 pb-4">
+          <div className="inline-flex items-center gap-1.5 font-mono text-[10px] text-stone-500 uppercase tracking-widest mb-1.5">
+            <Terminal className="h-3 w-3" />
+            <span>IDENTITY // DOSSIER</span>
+          </div>
+          <h1 className="font-mono text-2xl sm:text-3xl font-black text-stone-900 uppercase tracking-tight">
+            RESEARCHER_PROFILE
+          </h1>
+          <p className="text-xs text-stone-500 mt-1 font-sans">
+            Manage your credentials and inspect your telemetry and habit streaks.
+          </p>
         </div>
 
         {statusMessage && (
           <div
-            className={`mb-6 flex items-center gap-2 rounded-xl p-4 text-sm ${
+            className={`mb-6 flex items-center gap-2 rounded border p-3 font-mono text-xs ${
               statusMessage.type === 'success'
-                ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                : 'bg-rose-50 text-rose-800 border border-rose-200'
+                ? 'border-emerald-300 bg-emerald-50/80 text-emerald-800'
+                : 'border-rose-300 bg-rose-50/80 text-rose-800'
             }`}
           >
             {statusMessage.type === 'success' ? (
-              <CheckCircle className="h-5 w-5 shrink-0 text-emerald-600" />
+              <Check className="h-4 w-4 shrink-0 text-emerald-600" />
             ) : (
-              <AlertCircle className="h-5 w-5 shrink-0 text-rose-600" />
+              <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
             )}
-            <span>{statusMessage.text}</span>
+            <span>[{statusMessage.text}]</span>
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {/* Stats Column */}
-          <div className="space-y-4">
-            <div className="rounded-2xl bg-white p-6 border border-slate-100 shadow-sm">
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">
-                Learning Overview
-              </h2>
+          <div className="space-y-3">
+            <div className="rounded-xl border border-stone-200 bg-white/95 p-5 shadow-2xs">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-stone-400 block mb-3 border-b border-stone-100 pb-2">
+                TELEMETRY_LOG
+              </span>
 
               <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600 border border-amber-200">
-                    <Award className="h-5 w-5" />
+                <div>
+                  <div className="font-mono text-[10px] text-stone-400 uppercase flex items-center gap-1">
+                    <Award className="h-3 w-3 text-amber-500" />
+                    TOTAL_XP
                   </div>
-                  <div>
-                    <div className="text-xs text-slate-500">Total XP</div>
-                    <div className="text-lg font-bold text-slate-900">{profile?.total_xp ?? 0} XP</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-orange-600 border border-orange-200">
-                    <Flame className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-xs text-slate-500">Current Streak</div>
-                    <div className="text-lg font-bold text-slate-900">{profile?.current_streak ?? 0} Days</div>
+                  <div className="font-mono text-2xl font-black text-stone-900 mt-0.5">
+                    {profile?.total_xp ?? 0} <span className="text-xs font-normal text-stone-500">XP</span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600 border border-purple-200">
-                    <Flame className="h-5 w-5" />
+                <div>
+                  <div className="font-mono text-[10px] text-stone-400 uppercase flex items-center gap-1">
+                    <Flame className="h-3 w-3 text-orange-500" />
+                    CURRENT_STREAK
                   </div>
-                  <div>
-                    <div className="text-xs text-slate-500">Longest Streak</div>
-                    <div className="text-lg font-bold text-slate-900">{profile?.longest_streak ?? 0} Days</div>
+                  <div className="font-mono text-2xl font-black text-stone-900 mt-0.5">
+                    {profile?.current_streak ?? 0} <span className="text-xs font-normal text-stone-500">DAYS</span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-slate-600 border border-slate-200">
-                    <Calendar className="h-5 w-5" />
+                <div>
+                  <div className="font-mono text-[10px] text-stone-400 uppercase flex items-center gap-1">
+                    <Flame className="h-3 w-3 text-purple-500" />
+                    LONGEST_STREAK
                   </div>
-                  <div>
-                    <div className="text-xs text-slate-500">Last Read Date</div>
-                    <div className="text-sm font-semibold text-slate-800">
-                      {profile?.last_read_date ? profile.last_read_date : 'No sessions yet'}
-                    </div>
+                  <div className="font-mono text-2xl font-black text-stone-900 mt-0.5">
+                    {profile?.longest_streak ?? 0} <span className="text-xs font-normal text-stone-500">DAYS</span>
+                  </div>
+                </div>
+
+                <div className="border-t border-stone-100 pt-3">
+                  <div className="font-mono text-[10px] text-stone-400 uppercase flex items-center gap-1">
+                    <Calendar className="h-3 w-3 text-stone-500" />
+                    LAST_READ_TIMESTAMP
+                  </div>
+                  <div className="font-mono text-xs font-semibold text-stone-800 mt-0.5">
+                    {profile?.last_read_date ? profile.last_read_date : '[NO_SESSION_RECORDED]'}
                   </div>
                 </div>
               </div>
@@ -198,40 +205,42 @@ export default function ProfilePage() {
 
           {/* Edit Profile Form */}
           <div className="md:col-span-2">
-            <div className="rounded-2xl bg-white p-6 sm:p-8 border border-slate-100 shadow-sm">
-              <h2 className="text-lg font-bold text-slate-900 mb-6">Profile Settings</h2>
+            <div className="rounded-xl border border-stone-200 bg-white/95 p-5 sm:p-7 shadow-2xs">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-stone-400 block mb-5 border-b border-stone-100 pb-2">
+                CREDENTIAL_CONFIG
+              </span>
 
-              <form onSubmit={handleSaveProfile} className="space-y-5">
+              <form onSubmit={handleSaveProfile} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-                    Account Email (Read-Only)
+                  <label className="block font-mono text-[11px] uppercase tracking-wider text-stone-500 mb-1">
+                    ACCOUNT_EMAIL (READ_ONLY)
                   </label>
                   <input
                     type="email"
                     disabled
                     value={email}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-500 cursor-not-allowed"
+                    className="w-full rounded border border-stone-200 bg-stone-50 px-3.5 py-2 font-mono text-xs text-stone-500 cursor-not-allowed"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-                    Display Name
+                  <label className="block font-mono text-[11px] uppercase tracking-wider text-stone-600 mb-1">
+                    DISPLAY_NAME
                   </label>
                   <input
                     type="text"
                     required
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
-                    placeholder="Your visible name"
-                    className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+                    placeholder="e.g. Alex Turing"
+                    className="w-full rounded border border-stone-300 bg-white px-3.5 py-2 text-xs font-sans focus:border-stone-900 focus:outline-hidden"
                   />
-                  <p className="text-xs text-slate-400 mt-1">This name appears on your dashboard greeting.</p>
+                  <p className="font-mono text-[10px] text-stone-400 mt-1">Visible on daily dashboard and briefs.</p>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-                    Username
+                  <label className="block font-mono text-[11px] uppercase tracking-wider text-stone-600 mb-1">
+                    SYSTEM_HANDLE / USERNAME
                   </label>
                   <input
                     type="text"
@@ -239,19 +248,18 @@ export default function ProfilePage() {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="e.g. alex_learner"
-                    className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+                    className="w-full rounded border border-stone-300 bg-white px-3.5 py-2 text-xs font-mono focus:border-stone-900 focus:outline-hidden"
                   />
-                  <p className="text-xs text-slate-400 mt-1">Unique handle for your NUGGET account.</p>
                 </div>
 
                 <div className="pt-2">
                   <button
                     type="submit"
                     disabled={saving}
-                    className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-amber-600 disabled:opacity-50 transition"
+                    className="inline-flex items-center gap-1.5 rounded border border-stone-900 bg-stone-900 px-4 py-2 font-mono text-xs font-bold text-white shadow-2xs hover:bg-stone-800 disabled:opacity-50 transition uppercase tracking-wider"
                   >
-                    <Save className="h-4 w-4" />
-                    <span>{saving ? 'Saving...' : 'Save Profile'}</span>
+                    <Save className="h-3.5 w-3.5" />
+                    <span>{saving ? 'UPDATING...' : 'SAVE_PROFILE'}</span>
                   </button>
                 </div>
               </form>

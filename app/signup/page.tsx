@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Navbar from '@/components/Navbar';
-import { Sparkles, Mail, Lock, User, ArrowRight } from 'lucide-react';
+import { Mail, Lock, User as UserIcon, ArrowRight, Terminal, Check } from 'lucide-react';
 
 export default function SignUpPage() {
   const [email, setEmail] = useState('');
@@ -34,7 +34,6 @@ export default function SignUpPage() {
       if (error) throw error;
 
       if (data.user) {
-        // If profile creation trigger doesn't exist, create or update profile record directly
         await supabase.from('profiles').upsert({
           id: data.user.id,
           display_name: displayName || email.split('@')[0],
@@ -43,16 +42,16 @@ export default function SignUpPage() {
       }
 
       if (data.session) {
-        setMessage({ type: 'success', text: 'Account created successfully! Redirecting...' });
+        setMessage({ type: 'success', text: 'ACCOUNT_PROVISIONED_SUCCESSFULLY' });
         setTimeout(() => router.push('/topics'), 1500);
       } else {
         setMessage({
           type: 'success',
-          text: 'Account created! Please check your email to confirm your account before logging in.',
+          text: 'VERIFICATION_DISPATCHED: Check your email inbox to confirm registration.',
         });
       }
     } catch (err: unknown) {
-      const text = err instanceof Error ? err.message : 'Failed to sign up.';
+      const text = err instanceof Error ? err.message : 'REGISTRATION_FAILED';
       setMessage({ type: 'error', text });
     } finally {
       setLoading(false);
@@ -60,70 +59,76 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
+    <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-1 flex items-center justify-center p-4">
-        <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl shadow-slate-100 border border-slate-100">
-          <div className="mb-8 text-center">
-            <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500 text-white shadow-md shadow-amber-200 mb-4">
-              <Sparkles className="h-6 w-6" />
+        <div className="w-full max-w-sm rounded-2xl border border-stone-300 bg-white/95 p-7 shadow-xs graph-paper-bg">
+          <div className="mb-6">
+            <div className="flex items-center gap-1.5 font-mono text-[10px] text-stone-500 uppercase tracking-widest mb-1.5">
+              <Terminal className="h-3 w-3" />
+              <span>REGISTRATION // IDENTITY_INIT</span>
             </div>
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Create your account</h1>
-            <p className="text-sm text-slate-500 mt-1">Start your bite-sized daily learning journey</p>
+            <h1 className="font-mono text-xl font-black text-stone-900 uppercase tracking-tight">
+              CREATE_ACCOUNT
+            </h1>
+            <p className="text-xs text-stone-500 mt-1 font-sans">
+              Provision a new NUGGET researcher profile to track verified learning streaks.
+            </p>
           </div>
 
           {message && (
             <div
-              className={`mb-6 rounded-xl p-4 text-sm ${
+              className={`mb-4 rounded border p-3 font-mono text-xs ${
                 message.type === 'success'
-                  ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                  : 'bg-rose-50 text-rose-800 border border-rose-200'
+                  ? 'border-emerald-300 bg-emerald-50/80 text-emerald-800'
+                  : 'border-rose-300 bg-rose-50/80 text-rose-800'
               }`}
             >
-              {message.text}
+              {message.type === 'success' && <Check className="inline h-3.5 w-3.5 mr-1 text-emerald-600" />}
+              [{message.text}]
             </div>
           )}
 
-          <form onSubmit={handleSignUp} className="space-y-4">
+          <form onSubmit={handleSignUp} className="space-y-3.5">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-                Display Name
+              <label className="block font-mono text-[10px] uppercase tracking-wider text-stone-500 mb-1">
+                DISPLAY_NAME
               </label>
               <div className="relative">
-                <User className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+                <UserIcon className="absolute left-3 top-2.5 h-3.5 w-3.5 text-stone-400" />
                 <input
                   type="text"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder="e.g. Alex"
-                  className="w-full rounded-xl border border-slate-200 pl-10 pr-4 py-2.5 text-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+                  placeholder="e.g. Alex Turing"
+                  className="w-full rounded border border-stone-300 bg-white pl-9 pr-3 py-2 text-xs font-sans focus:border-stone-900 focus:outline-hidden"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-                Email Address
+              <label className="block font-mono text-[10px] uppercase tracking-wider text-stone-500 mb-1">
+                EMAIL_IDENTIFIER
               </label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+                <Mail className="absolute left-3 top-2.5 h-3.5 w-3.5 text-stone-400" />
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="alex@example.com"
-                  className="w-full rounded-xl border border-slate-200 pl-10 pr-4 py-2.5 text-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+                  placeholder="researcher@nugget.io"
+                  className="w-full rounded border border-stone-300 bg-white pl-9 pr-3 py-2 font-mono text-xs focus:border-stone-900 focus:outline-hidden"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-                Password
+              <label className="block font-mono text-[10px] uppercase tracking-wider text-stone-500 mb-1">
+                PASSPHRASE
               </label>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+                <Lock className="absolute left-3 top-2.5 h-3.5 w-3.5 text-stone-400" />
                 <input
                   type="password"
                   required
@@ -131,7 +136,7 @@ export default function SignUpPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   minLength={6}
-                  className="w-full rounded-xl border border-slate-200 pl-10 pr-4 py-2.5 text-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+                  className="w-full rounded border border-stone-300 bg-white pl-9 pr-3 py-2 font-mono text-xs focus:border-stone-900 focus:outline-hidden"
                 />
               </div>
             </div>
@@ -139,17 +144,17 @@ export default function SignUpPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 rounded-xl bg-amber-500 py-3 text-sm font-semibold text-white shadow-md shadow-amber-200 hover:bg-amber-600 disabled:opacity-50 transition"
+              className="w-full mt-2 flex items-center justify-center gap-1.5 rounded border border-stone-900 bg-stone-900 py-2.5 font-mono text-xs font-bold text-white shadow-2xs hover:bg-stone-800 disabled:opacity-50 transition uppercase tracking-wider"
             >
-              <span>{loading ? 'Creating account...' : 'Create Account'}</span>
-              <ArrowRight className="h-4 w-4" />
+              <span>{loading ? 'PROVISIONING...' : 'INITIALIZE_ACCOUNT'}</span>
+              <ArrowRight className="h-3.5 w-3.5" />
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-slate-500">
-            Already have an account?{' '}
-            <Link href="/login" className="font-semibold text-amber-600 hover:text-amber-700">
-              Log in
+          <p className="mt-5 text-center font-mono text-xs text-stone-500 border-t border-stone-100 pt-4">
+            ALREADY_REGISTERED?{' '}
+            <Link href="/login" className="font-bold text-stone-900 hover:underline">
+              SIGN_IN &rarr;
             </Link>
           </p>
         </div>
