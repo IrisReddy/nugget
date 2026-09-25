@@ -7,6 +7,8 @@ import Navbar from '@/components/Navbar';
 import { User } from '@supabase/supabase-js';
 import { IngestedArticle } from '@/lib/news';
 import NuggetReaderModal from '@/components/NuggetReaderModal';
+import AchievementsModal from '@/components/AchievementsModal';
+import { calculateLevel } from '@/lib/xp';
 import {
   Flame,
   Award,
@@ -31,7 +33,14 @@ interface UserCategoryItem {
 
 export default function HomePage() {
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<{ display_name?: string; total_xp?: number; current_streak?: number } | null>(null);
+  const [profile, setProfile] = useState<{
+    display_name?: string;
+    total_xp?: number;
+    current_streak?: number;
+    longest_streak?: number;
+    last_read_date?: string | null;
+  } | null>(null);
+  const [showAchievements, setShowAchievements] = useState(false);
   const [userCategories, setUserCategories] = useState<UserCategoryItem[]>([]);
   const [articles, setArticles] = useState<IngestedArticle[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<string>('ALL');
@@ -40,11 +49,13 @@ export default function HomePage() {
   const [loadingArticles, setLoadingArticles] = useState(false);
 
   const handleReadingComplete = (newTotalXp?: number, newStreak?: number) => {
+    const today = new Date().toISOString().split('T')[0];
     if (newTotalXp !== undefined) {
       setProfile((prev) => (prev ? {
         ...prev,
         total_xp: newTotalXp,
         current_streak: newStreak !== undefined ? newStreak : prev.current_streak,
+        last_read_date: today,
       } : null));
     }
   };
@@ -58,7 +69,7 @@ export default function HomePage() {
       if (user) {
         const { data: profData } = await supabase
           .from('profiles')
-          .select('display_name, total_xp, current_streak')
+          .select('display_name, total_xp, current_streak, longest_streak, last_read_date')
           .eq('id', user.id)
           .single();
 
@@ -173,53 +184,140 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Nerdy Stats Ledger */}
-        <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="rounded-xl border border-stone-200 bg-white/95 p-4 shadow-2xs">
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-[11px] font-semibold text-stone-600 uppercase tracking-wider">
-                CURRENT_STREAK
-              </span>
-              <Flame className="h-4 w-4 text-orange-500" />
-            </div>
-            <div className="mt-2 flex items-baseline gap-2">
-              <span className="font-mono text-3xl font-extrabold text-stone-900 tracking-tight">
-                {profile?.current_streak ?? 0}
-              </span>
-              <span className="font-mono text-xs text-stone-600 uppercase">CONSECUTIVE_DAYS</span>
-            </div>
-          </div>
+        {/* Step 09: Habit & Streak Telemetry Ledger */}
+        {(() => {
+          const currentTotalXp = profile?.total_xp || 0;
+          const currentStreak = profile?.current_streak || 0;
+          const levelInfo = calculateLevel(currentTotalXp);
+          const todayStr = new Date().toISOString().split('T')[0];
+          const isReadToday = profile?.last_read_date === todayStr;
+          const dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
-          <div className="rounded-xl border border-stone-200 bg-white/95 p-4 shadow-2xs">
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-[11px] font-semibold text-stone-600 uppercase tracking-wider">
-                TOTAL_XP_ACCUMULATED
-              </span>
-              <Award className="h-4 w-4 text-amber-500" />
-            </div>
-            <div className="mt-2 flex items-baseline gap-2">
-              <span className="font-mono text-3xl font-extrabold text-stone-900 tracking-tight">
-                {profile?.total_xp ?? 0}
-              </span>
-              <span className="font-mono text-xs text-stone-600 uppercase">XP_POINTS</span>
-            </div>
-          </div>
+          return (
+            <section className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {/* Card 1: Habit Streak */}
+              <div className="rounded-xl border border-stone-200 bg-white/95 p-4 shadow-2xs flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-[11px] font-semibold text-stone-600 uppercase tracking-wider">
+                      DAILY_HABIT_STREAK
+                    </span>
+                    <Flame className={`h-4 w-4 ${currentStreak > 0 ? 'text-orange-500 fill-orange-500/20' : 'text-stone-300'}`} />
+                  </div>
 
-          <div className="rounded-xl border border-stone-200 bg-white/95 p-4 shadow-2xs">
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-[11px] font-semibold text-stone-600 uppercase tracking-wider">
-                ACTIVE_FEEDS
-              </span>
-              <BookOpen className="h-4 w-4 text-blue-500" />
-            </div>
-            <div className="mt-2 flex items-baseline gap-2">
-              <span className="font-mono text-3xl font-extrabold text-stone-900 tracking-tight">
-                {userCategories.length}
-              </span>
-              <span className="font-mono text-xs text-stone-600 uppercase">TOPICS_SUBSCRIBED</span>
-            </div>
-          </div>
-        </section>
+                  <div className="mt-2 flex items-baseline gap-2">
+                    <span className="font-mono text-3xl font-extrabold text-stone-900 tracking-tight">
+                      {currentStreak}
+                    </span>
+                    <span className="font-mono text-xs text-stone-600 uppercase">CONSECUTIVE_DAYS</span>
+                  </div>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between">
+                  {/* 7-Day Matrix */}
+                  <div className="flex items-center gap-1.5">
+                    {dayLabels.map((day, i) => (
+                      <div key={i} className="flex flex-col items-center gap-1">
+                        <span className="font-mono text-[9px] text-stone-400">{day}</span>
+                        <div
+                          className={`h-2.5 w-2.5 rounded-xs border ${
+                            i === 6 && isReadToday
+                              ? 'border-orange-500 bg-orange-500 shadow-2xs'
+                              : i < Math.min(6, currentStreak)
+                              ? 'border-stone-800 bg-stone-800'
+                              : 'border-stone-200 bg-stone-100'
+                          }`}
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  <span
+                    className={`font-mono text-[9px] font-bold px-2 py-0.5 rounded border uppercase ${
+                      isReadToday
+                        ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
+                        : 'border-amber-300 bg-amber-50 text-amber-700'
+                    }`}
+                  >
+                    {isReadToday ? 'TODAY_ACTIVE 🔥' : 'TODAY_PENDING ⏳'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Card 2: Scholar Tier & XP Leveling */}
+              <div className="rounded-xl border border-stone-200 bg-white/95 p-4 shadow-2xs flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-[11px] font-semibold text-stone-600 uppercase tracking-wider">
+                      SCHOLAR_RANK // TIER {levelInfo.level}
+                    </span>
+                    <Award className="h-4 w-4 text-amber-500" />
+                  </div>
+
+                  <div className="mt-2">
+                    <div className="font-mono text-base font-black text-stone-900 uppercase">
+                      {levelInfo.title}
+                    </div>
+                    <div className="flex items-center justify-between font-mono text-[10px] text-stone-500 mt-1">
+                      <span>{currentTotalXp} XP</span>
+                      <span>{levelInfo.maxXp} XP NEXT</span>
+                    </div>
+
+                    <div className="h-1.5 w-full bg-stone-200 rounded-full overflow-hidden mt-1.5">
+                      <div
+                        className="h-full bg-amber-500 transition-all duration-500"
+                        style={{ width: `${levelInfo.progressPercent}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-3 pt-2 border-t border-stone-100 flex items-center justify-between">
+                  <button
+                    onClick={() => setShowAchievements(true)}
+                    className="inline-flex items-center gap-1 font-mono text-[10px] font-bold text-amber-800 hover:text-amber-950 underline uppercase tracking-wider"
+                  >
+                    <span>VIEW_ACCOLADES & BADGES &rarr;</span>
+                  </button>
+                  <span className="font-mono text-[9px] text-stone-400">
+                    +{levelInfo.maxXp - currentTotalXp} XP TO TIER {levelInfo.level + 1}
+                  </span>
+                </div>
+              </div>
+
+              {/* Card 3: Active Dispatches */}
+              <div className="rounded-xl border border-stone-200 bg-white/95 p-4 shadow-2xs flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-[11px] font-semibold text-stone-600 uppercase tracking-wider">
+                      SUBSCRIBED_FEEDS
+                    </span>
+                    <BookOpen className="h-4 w-4 text-blue-500" />
+                  </div>
+
+                  <div className="mt-2 flex items-baseline gap-2">
+                    <span className="font-mono text-3xl font-extrabold text-stone-900 tracking-tight">
+                      {userCategories.length}
+                    </span>
+                    <span className="font-mono text-xs text-stone-600 uppercase">CATEGORIES_ACTIVE</span>
+                  </div>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between">
+                  <span className="font-mono text-[10px] text-stone-400 uppercase">
+                    15 DISPATCHES IN QUEUE
+                  </span>
+                  <Link
+                    href="/topics"
+                    className="font-mono text-[10px] font-bold text-stone-700 hover:text-stone-950 underline uppercase"
+                  >
+                    MANAGE &rarr;
+                  </Link>
+                </div>
+              </div>
+            </section>
+          );
+        })()}
 
         {/* Selected Interests Pill Bar */}
         {user && userCategories.length > 0 && (
@@ -445,6 +543,14 @@ export default function HomePage() {
           article={selectedArticle}
           userId={user?.id}
           onReadingComplete={handleReadingComplete}
+        />
+
+        {/* Achievements Accolades Modal */}
+        <AchievementsModal
+          isOpen={showAchievements}
+          onClose={() => setShowAchievements(false)}
+          userId={user?.id}
+          totalXp={profile?.total_xp || 0}
         />
       </main>
     </div>
