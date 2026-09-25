@@ -39,21 +39,13 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [loadingArticles, setLoadingArticles] = useState(false);
 
-  const handleReadingComplete = async () => {
-    if (!user) return;
-    const newXP = (profile?.total_xp ?? 0) + 10;
-    setProfile((prev) => (prev ? { ...prev, total_xp: newXP } : null));
-
-    try {
-      await supabase
-        .from('profiles')
-        .update({
-          total_xp: newXP,
-          last_read_date: new Date().toISOString().split('T')[0],
-        })
-        .eq('id', user.id);
-    } catch (err: unknown) {
-      console.error('Failed to update XP:', err);
+  const handleReadingComplete = (newTotalXp?: number, newStreak?: number) => {
+    if (newTotalXp !== undefined) {
+      setProfile((prev) => (prev ? {
+        ...prev,
+        total_xp: newTotalXp,
+        current_streak: newStreak !== undefined ? newStreak : prev.current_streak,
+      } : null));
     }
   };
 
@@ -451,6 +443,7 @@ export default function HomePage() {
           isOpen={!!selectedArticle}
           onClose={() => setSelectedArticle(null)}
           article={selectedArticle}
+          userId={user?.id}
           onReadingComplete={handleReadingComplete}
         />
       </main>
