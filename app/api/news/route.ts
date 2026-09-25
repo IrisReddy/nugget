@@ -1,15 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchNewsForCategory, ingestNewsToSupabase } from '@/lib/news';
+import { fetchNewsForCategory, fetchNewsForCategories, ingestNewsToSupabase } from '@/lib/news';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const category = searchParams.get('category') || 'Technology';
+  const categoriesParam = searchParams.get('categories');
+  const singleCategory = searchParams.get('category');
 
   try {
-    const articles = await fetchNewsForCategory(category, 6);
+    let articles;
+    if (categoriesParam) {
+      const catList = categoriesParam.split(',').map((c) => c.trim()).filter(Boolean);
+      articles = await fetchNewsForCategories(catList, 3);
+    } else {
+      const category = singleCategory || 'Technology';
+      articles = await fetchNewsForCategory(category, 6);
+    }
+
     return NextResponse.json({
       success: true,
-      category,
       count: articles.length,
       articles,
     });

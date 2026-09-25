@@ -5,18 +5,21 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import Navbar from '@/components/Navbar';
 import { User } from '@supabase/supabase-js';
+import { IngestedArticle } from '@/lib/news';
 import {
   Flame,
   Award,
   BookOpen,
-  ArrowRight,
   Compass,
   CheckCircle2,
   Newspaper,
   ShieldCheck,
   Clock,
   Terminal,
-  FileCheck2
+  FileCheck2,
+  ExternalLink,
+  RefreshCw,
+  Sparkles
 } from 'lucide-react';
 
 interface UserCategoryItem {
@@ -28,7 +31,10 @@ export default function HomePage() {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<{ display_name?: string; total_xp?: number; current_streak?: number } | null>(null);
   const [userCategories, setUserCategories] = useState<UserCategoryItem[]>([]);
+  const [articles, setArticles] = useState<IngestedArticle[]>([]);
+  const [selectedFilter, setSelectedFilter] = useState<string>('ALL');
   const [loading, setLoading] = useState(true);
+  const [loadingArticles, setLoadingArticles] = useState(false);
 
   useEffect(() => {
     async function loadDashboard() {
@@ -50,15 +56,50 @@ export default function HomePage() {
           .select('category_id, categories(name)')
           .eq('user_id', user.id);
 
-        if (catData) setUserCategories(catData as unknown as UserCategoryItem[]);
+        if (catData) {
+          const typedCats = catData as unknown as UserCategoryItem[];
+          setUserCategories(typedCats);
+          
+          // Fetch live news for user's subscribed categories
+          const catNames = typedCats.map((c) => c.categories?.name).filter(Boolean);
+          await loadArticles(catNames.length > 0 ? (catNames as string[]) : ['Technology', 'Science', 'World']);
+        }
+      } else {
+        // Fallback preview for unauthenticated visitors
+        await loadArticles(['Technology', 'Science', 'World']);
       }
+
       setLoading(false);
     }
 
     loadDashboard();
   }, []);
 
+  async function loadArticles(catNames: string[]) {
+    setLoadingArticles(true);
+    try {
+      const res = await fetch(`/api/news?categories=${encodeURIComponent(catNames.join(','))}`);
+      const data = await res.json();
+      if (data.success && data.articles) {
+        setArticles(data.articles);
+      }
+    } catch (err: unknown) {
+      console.error('Failed to load articles:', err);
+    } finally {
+      setLoadingArticles(false);
+    }
+  }
+
+  const handleRefresh = async () => {
+    const catNames = userCategories.map((c) => c.categories?.name).filter(Boolean);
+    await loadArticles(catNames.length > 0 ? (catNames as string[]) : ['Technology', 'Science', 'World']);
+  };
+
   const displayName = profile?.display_name || user?.email?.split('@')[0] || 'Learner';
+
+  const filteredArticles = selectedFilter === 'ALL'
+    ? articles
+    : articles.filter((a) => a.category.toLowerCase() === selectedFilter.toLowerCase());
 
   if (loading) {
     return (
@@ -86,7 +127,7 @@ export default function HomePage() {
               BRIEFING_DOC // DAILY_FEED
             </span>
             <span className="font-mono text-[11px] text-stone-600 uppercase tracking-widest">
-              STEP: 05 / 10
+              STEP: 06 / 10 (LIVE_FEEDS_ACTIVE)
             </span>
           </div>
 
@@ -192,45 +233,153 @@ export default function HomePage() {
           </section>
         )}
 
-        {/* Observation Ledger: Today's Nuggets Feed Placeholder */}
-        <section className="space-y-3">
-          <div className="flex items-center justify-between border-b border-stone-300 pb-2">
+        {/* Live Observation Ledger: Today's Nuggets Feed */}
+        <section className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-stone-300 pb-3">
             <div>
-              <h2 className="font-mono text-base font-extrabold text-stone-900 uppercase tracking-tight">
-                TODAY&apos;S_NUGGETS // FEED
+              <h2 className="font-mono text-base font-extrabold text-stone-900 uppercase tracking-tight flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-amber-500" />
+                TODAY&apos;S_NUGGETS // MULTI_SOURCE_FEED
               </h2>
               <p className="text-xs text-stone-500 mt-0.5 font-sans">
-                Curated, multi-source verified summaries aligned with your selected topics.
+                Curated, multi-source verified summaries aligned with your subscribed topics.
               </p>
             </div>
-            <span className="font-mono text-[10px] text-stone-500 border border-stone-300 bg-stone-100 px-2 py-0.5 rounded uppercase">
-              STATUS: READY_FOR_API
-            </span>
-          </div>
 
-          <div className="rounded-2xl border-2 border-dashed border-stone-300 bg-white/70 p-8 sm:p-12 text-center graph-paper-bg">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded border border-stone-300 bg-white text-stone-700 mb-4 shadow-2xs">
-              <Newspaper className="h-6 w-6" />
-            </div>
-            <h3 className="font-mono text-sm font-bold text-stone-900 uppercase tracking-wider">
-              [NO_ARTICLES_STAGED_YET]
-            </h3>
-            <p className="max-w-md mx-auto text-xs text-stone-600 mt-2 leading-relaxed font-sans">
-              Currently on <span className="font-mono font-bold text-stone-900">STEP 05 (Topic System)</span>.
-              Once News/API (Step 06) and AI Multi-Source Synthesis (Step 07) run, your personalized briefing ledger
-              will populate with verified citations and reading tracking.
-            </p>
-
-            <div className="mt-5 flex justify-center">
-              <Link
-                href="/topics"
-                className="inline-flex items-center gap-1.5 rounded border border-stone-800 bg-stone-900 px-3.5 py-1.5 font-mono text-xs font-semibold text-white shadow-2xs hover:bg-stone-800 transition uppercase tracking-wider"
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleRefresh}
+                disabled={loadingArticles}
+                className="inline-flex items-center gap-1 rounded border border-stone-300 bg-white px-2.5 py-1 font-mono text-xs text-stone-600 hover:bg-stone-50 disabled:opacity-50 transition uppercase tracking-wider"
+                title="Sync Feeds"
               >
-                <span>Select Topics</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
+                <RefreshCw className={`h-3 w-3 ${loadingArticles ? 'animate-spin' : ''}`} />
+                <span>SYNC</span>
+              </button>
+
+              <span className="font-mono text-[10px] text-emerald-700 border border-emerald-300 bg-emerald-50 px-2 py-0.5 rounded uppercase">
+                STATUS: LIVE_INGESTION
+              </span>
             </div>
           </div>
+
+          {/* Filter Pills */}
+          {userCategories.length > 0 && (
+            <div className="flex flex-wrap items-center gap-1.5 pb-1">
+              <button
+                onClick={() => setSelectedFilter('ALL')}
+                className={`rounded px-2.5 py-1 font-mono text-xs uppercase tracking-wider transition ${
+                  selectedFilter === 'ALL'
+                    ? 'border border-stone-900 bg-stone-900 text-white font-bold'
+                    : 'border border-stone-200 bg-white text-stone-600 hover:border-stone-400'
+                }`}
+              >
+                [ALL ({articles.length})]
+              </button>
+              {userCategories.map((c, i) => {
+                const name = c.categories?.name;
+                if (!name) return null;
+                const isSelected = selectedFilter.toLowerCase() === name.toLowerCase();
+                const count = articles.filter((a) => a.category.toLowerCase() === name.toLowerCase()).length;
+                return (
+                  <button
+                    key={i}
+                    onClick={() => setSelectedFilter(name)}
+                    className={`rounded px-2.5 py-1 font-mono text-xs uppercase tracking-wider transition ${
+                      isSelected
+                        ? 'border border-stone-900 bg-stone-900 text-white font-bold'
+                        : 'border border-stone-200 bg-white text-stone-600 hover:border-stone-400'
+                    }`}
+                  >
+                    [{name.toUpperCase()} ({count})]
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Articles Stream */}
+          {loadingArticles ? (
+            <div className="rounded-2xl border border-stone-200 bg-white p-12 text-center graph-paper-bg">
+              <RefreshCw className="h-6 w-6 animate-spin mx-auto text-stone-400 mb-3" />
+              <div className="font-mono text-xs text-stone-500 uppercase tracking-widest">
+                [INGESTING_FEED_STREAMS: NORMALIZING_MULTI_SOURCE_DISPATCHES...]
+              </div>
+            </div>
+          ) : filteredArticles.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredArticles.map((article, idx) => {
+                const dateStr = article.publishedAt
+                  ? new Date(article.publishedAt).toLocaleDateString(undefined, {
+                      month: 'short',
+                      day: 'numeric',
+                    })
+                  : 'TODAY';
+
+                return (
+                  <article
+                    key={idx}
+                    className="group relative flex flex-col justify-between rounded-xl border border-stone-200 bg-white/95 p-5 shadow-2xs hover:border-stone-900 hover:shadow-xs transition-all"
+                  >
+                    <div>
+                      {/* Top Metadata Line */}
+                      <div className="flex items-center justify-between gap-2 mb-3">
+                        <span className="font-mono text-[10px] font-bold uppercase tracking-wider rounded border border-stone-200 bg-stone-100 px-2 py-0.5 text-stone-800">
+                          [{article.category}]
+                        </span>
+
+                        <div className="flex items-center gap-2 font-mono text-[10px] text-stone-400 uppercase">
+                          <span>{article.sourceName}</span>
+                          <span>•</span>
+                          <span>{dateStr}</span>
+                        </div>
+                      </div>
+
+                      {/* Headline */}
+                      <h3 className="font-sans text-base font-bold text-stone-900 leading-snug group-hover:text-amber-950 transition">
+                        {article.title}
+                      </h3>
+
+                      {/* Bite-sized summary */}
+                      <p className="mt-2 text-xs text-stone-600 leading-relaxed font-sans line-clamp-3">
+                        {article.summary || 'Summary unavailable. Click to read the full source.'}
+                      </p>
+                    </div>
+
+                    {/* Footer / Transparency Badge */}
+                    <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 font-mono text-[10px] text-emerald-700">
+                        <CheckCircle2 className="h-3 w-3 text-emerald-600" />
+                        <span>SOURCE_VERIFIED</span>
+                      </div>
+
+                      <a
+                        href={article.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 font-mono text-xs font-semibold text-stone-700 hover:text-stone-950 hover:underline"
+                      >
+                        <span>READ_SOURCE</span>
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="rounded-2xl border-2 border-dashed border-stone-300 bg-white/70 p-8 sm:p-12 text-center graph-paper-bg">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded border border-stone-300 bg-white text-stone-700 mb-4 shadow-2xs">
+                <Newspaper className="h-6 w-6" />
+              </div>
+              <h3 className="font-mono text-sm font-bold text-stone-900 uppercase tracking-wider">
+                [NO_NUGGETS_IN_QUEUE]
+              </h3>
+              <p className="max-w-md mx-auto text-xs text-stone-600 mt-2 leading-relaxed font-sans">
+                No active dispatches found for your selected topics. Click &apos;Sync&apos; above or configure additional topics.
+              </p>
+            </div>
+          )}
         </section>
 
         {/* Academic / Architectural Standards */}

@@ -96,6 +96,16 @@ export async function fetchNewsForCategory(categoryName: string, maxItemsPerFeed
 }
 
 /**
+ * Fetches recent articles across multiple categories concurrently
+ */
+export async function fetchNewsForCategories(categories: string[], maxPerFeed = 3): Promise<IngestedArticle[]> {
+  const promises = categories.map((cat) => fetchNewsForCategory(cat, maxPerFeed));
+  const nested = await Promise.all(promises);
+  const combined = nested.flat();
+  return combined.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+}
+
+/**
  * Ingests external news articles into Supabase tables: sources, articles, topics
  */
 export async function ingestNewsToSupabase(categoryName: string, categoryId?: string) {
