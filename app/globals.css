@@ -1,34 +1,50 @@
 @import "tailwindcss";
 
+@variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #fafaf9;
-  --foreground: #18181b;
-  --grid-line: rgba(24, 24, 27, 0.06);
+  /* Palette 2: Warm Espresso & Parchment (Light Theme) */
+  --bg-primary: #FAF7F2;
+  --bg-surface: #FFFFFF;
+  --bg-subtle: #F3EDE2;
+  --text-primary: #291C0E;
+  --text-muted: #7A6652;
+  --border-color: #E1D4C2;
+  --border-strong: #6E473B;
+  --grid-line: rgba(41, 28, 14, 0.055);
+  --accent-gold: #C4823F;
+}
+
+.dark {
+  /* Palette 1: Midnight & Steel Blue (Dark Theme) */
+  --bg-primary: #00002A;
+  --bg-surface: #0A1333;
+  --bg-subtle: #13264D;
+  --text-primary: #D4E4EC;
+  --text-muted: #8BA3C7;
+  --border-color: #1A3F75;
+  --border-strong: #3B628A;
+  --grid-line: rgba(59, 98, 138, 0.2);
+  --accent-gold: #F59E0B;
 }
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   background-image: 
     linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
     linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
   background-size: 28px 28px;
   background-position: center top;
   min-height: 100vh;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-/* Nerdy graph paper background utility */
+/* Graph paper surface utility */
 .graph-paper-bg {
-  background-color: #ffffff;
+  background-color: var(--bg-surface);
   background-image: 
-    linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
   background-size: 20px 20px;
-}
-
-/* Aesthetic mono tag */
-.mono-badge {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
 }

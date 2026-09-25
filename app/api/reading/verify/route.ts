@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
     const today = new Date().toISOString().split('T')[0];
 
     let newStreak = profile?.current_streak || 0;
-    if (!profile?.last_read_date) {
+    if (!profile?.last_read_date || newStreak === 0) {
       newStreak = 1;
     } else if (profile.last_read_date !== today) {
       const lastDate = new Date(profile.last_read_date);
@@ -88,6 +88,7 @@ export async function POST(request: NextRequest) {
         newStreak = 1;
       }
     }
+    newStreak = Math.max(1, newStreak);
 
     const newLongest = Math.max(profile?.longest_streak || 0, newStreak);
 
