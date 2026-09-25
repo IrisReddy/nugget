@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 import Navbar from '@/components/Navbar';
 import { User } from '@supabase/supabase-js';
 import { IngestedArticle } from '@/lib/news';
+import NuggetReaderModal from '@/components/NuggetReaderModal';
 import {
   Flame,
   Award,
@@ -19,7 +20,8 @@ import {
   FileCheck2,
   ExternalLink,
   RefreshCw,
-  Sparkles
+  Sparkles,
+  ArrowRight
 } from 'lucide-react';
 
 interface UserCategoryItem {
@@ -33,8 +35,27 @@ export default function HomePage() {
   const [userCategories, setUserCategories] = useState<UserCategoryItem[]>([]);
   const [articles, setArticles] = useState<IngestedArticle[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<string>('ALL');
+  const [selectedArticle, setSelectedArticle] = useState<IngestedArticle | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadingArticles, setLoadingArticles] = useState(false);
+
+  const handleReadingComplete = async () => {
+    if (!user) return;
+    const newXP = (profile?.total_xp ?? 0) + 10;
+    setProfile((prev) => (prev ? { ...prev, total_xp: newXP } : null));
+
+    try {
+      await supabase
+        .from('profiles')
+        .update({
+          total_xp: newXP,
+          last_read_date: new Date().toISOString().split('T')[0],
+        })
+        .eq('id', user.id);
+    } catch (err: unknown) {
+      console.error('Failed to update XP:', err);
+    }
+  };
 
   useEffect(() => {
     async function loadDashboard() {
@@ -353,15 +374,25 @@ export default function HomePage() {
                         <span>SOURCE_VERIFIED</span>
                       </div>
 
-                      <a
-                        href={article.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 font-mono text-xs font-semibold text-stone-700 hover:text-stone-950 hover:underline"
-                      >
-                        <span>READ_SOURCE</span>
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={article.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-1.5 rounded text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition"
+                          title="Open original source dispatch"
+                        >
+                          <ExternalLink className="h-3.5 w-3.5" />
+                        </a>
+
+                        <button
+                          onClick={() => setSelectedArticle(article)}
+                          className="inline-flex items-center gap-1.5 rounded border border-stone-800 bg-stone-900 px-3 py-1 font-mono text-xs font-bold text-white shadow-2xs hover:bg-stone-800 transition uppercase tracking-wider"
+                        >
+                          <span>READ_NUGGET</span>
+                          <ArrowRight className="h-3 w-3" />
+                        </button>
+                      </div>
                     </div>
                   </article>
                 );
@@ -414,6 +445,14 @@ export default function HomePage() {
             </p>
           </div>
         </section>
+
+        {/* Reader Modal */}
+        <NuggetReaderModal
+          isOpen={!!selectedArticle}
+          onClose={() => setSelectedArticle(null)}
+          article={selectedArticle}
+          onReadingComplete={handleReadingComplete}
+        />
       </main>
     </div>
   );
