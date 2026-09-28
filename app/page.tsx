@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Navbar from '@/components/Navbar';
+import AwardBadge from '@/components/AwardBadge';
 import { User } from '@supabase/supabase-js';
 import { IngestedArticle } from '@/lib/news';
 import NuggetReaderModal from '@/components/NuggetReaderModal';
@@ -29,7 +30,6 @@ import {
   FileCheck2,
   ExternalLink,
   RefreshCw,
-  Sparkles,
   ArrowRight,
   Bookmark,
   Star
@@ -141,7 +141,6 @@ function HomePageContent() {
         let fetchedArticles: IngestedArticle[] = data.articles;
 
         // Step 10: Topic Prioritization
-        // Find high-priority categories (interest_level === 2)
         const highPriorityNames = new Set(
           categoriesConfig
             .filter((c) => c.interest_level === 2 && c.categories?.name)
@@ -149,7 +148,6 @@ function HomePageContent() {
         );
 
         if (highPriorityNames.size > 0) {
-          // Sort high priority categories to the top of the feed
           fetchedArticles = [...fetchedArticles].sort((a, b) => {
             const aIsHigh = highPriorityNames.has(a.category.toLowerCase()) ? 1 : 0;
             const bIsHigh = highPriorityNames.has(b.category.toLowerCase()) ? 1 : 0;
@@ -205,8 +203,8 @@ function HomePageContent() {
       <div className="min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-1 flex items-center justify-center p-4">
-          <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-widest text-stone-500 dark:text-[#8BA3C7] animate-pulse">
-            <Sparkles className="h-4 w-4 animate-spin text-amber-500" />
+          <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-widest text-[#7A6652] dark:text-[#BEB5A9] animate-pulse">
+            <AwardBadge className="h-5 w-5 animate-spin text-amber-500" />
             <span>Loading your daily briefing...</span>
           </div>
         </main>
@@ -220,14 +218,14 @@ function HomePageContent() {
 
       <main className="flex-1 max-w-5xl mx-auto w-full p-4 sm:p-6 lg:p-8 space-y-8">
         {/* Dossier Header / Hero */}
-        <section className="relative rounded-2xl border border-stone-200 dark:border-[#1A3F75] bg-white/95 dark:bg-[#0A1333] p-6 sm:p-9 shadow-xs graph-paper-bg">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-100 dark:border-[#1A3F75] pb-3 mb-5">
+        <section className="relative rounded-2xl border border-[#E1D4C2] dark:border-[#6E473B] bg-white/95 dark:bg-[#362215] p-6 sm:p-9 shadow-xs graph-paper-bg">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#E1D4C2] dark:border-[#6E473B] pb-3 mb-5">
             <span className="font-mono text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5" />
+              <AwardBadge className="h-4 w-4 text-amber-500 fill-amber-500/20" />
               Daily Learning Dossier
             </span>
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 font-mono text-[11px] text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/40 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded uppercase">
+              <span className="inline-flex items-center gap-1.5 font-mono text-[11px] text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/40 bg-emerald-50 dark:bg-[#482D1E] px-2 py-0.5 rounded uppercase">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 Live Feeds Active
               </span>
@@ -235,10 +233,10 @@ function HomePageContent() {
           </div>
 
           <div className="max-w-2xl">
-            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-stone-900 dark:text-[#D4E4EC] uppercase font-mono">
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-[#291C0E] dark:text-[#E1D4C2] uppercase font-mono">
               {user ? `Greetings, ${displayName}.` : 'Daily Learning Dossier.'}
             </h1>
-            <p className="mt-3 text-sm sm:text-base text-stone-600 dark:text-[#8BA3C7] leading-relaxed font-sans">
+            <p className="mt-3 text-sm sm:text-base text-[#6E473B] dark:text-[#BEB5A9] leading-relaxed font-sans">
               What do you want to learn today? Transform noise, breaking curiosity, and disparate publications into
               compact, multi-source verified knowledge without artificial quiz mechanics.
             </p>
@@ -246,7 +244,7 @@ function HomePageContent() {
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <Link
                 href="/topics"
-                className="inline-flex items-center gap-2 rounded-lg border border-stone-900 dark:border-[#3B628A] bg-stone-900 dark:bg-[#1A3F75] px-4 py-2 font-mono text-xs font-bold text-white shadow-2xs hover:bg-stone-800 dark:hover:bg-[#13264D] transition uppercase tracking-wider"
+                className="inline-flex items-center gap-2 rounded-lg border border-[#291C0E] dark:border-[#A78D78] bg-[#291C0E] dark:bg-[#6E473B] px-4 py-2 font-mono text-xs font-bold text-white shadow-2xs hover:bg-[#6E473B] dark:hover:bg-[#482D1E] transition uppercase tracking-wider"
               >
                 <Compass className="h-3.5 w-3.5" />
                 <span>Configure Topics</span>
@@ -254,7 +252,7 @@ function HomePageContent() {
               {!user && (
                 <Link
                   href="/signup"
-                  className="inline-flex items-center gap-2 rounded-lg border border-stone-300 dark:border-[#1A3F75] bg-white dark:bg-[#0A1333] px-4 py-2 font-mono text-xs font-semibold text-stone-700 dark:text-[#D4E4EC] hover:bg-stone-50 dark:hover:bg-[#13264D] transition uppercase tracking-wider"
+                  className="inline-flex items-center gap-2 rounded-lg border border-[#E1D4C2] dark:border-[#6E473B] bg-white dark:bg-[#362215] px-4 py-2 font-mono text-xs font-semibold text-[#291C0E] dark:text-[#E1D4C2] hover:bg-[#E1D4C2]/40 dark:hover:bg-[#482D1E] transition uppercase tracking-wider"
                 >
                   Create Account &rarr;
                 </Link>
@@ -274,36 +272,36 @@ function HomePageContent() {
           return (
             <section className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {/* Card 1: Habit Streak */}
-              <div className="rounded-xl border border-stone-200 dark:border-[#1A3F75] bg-white/95 dark:bg-[#0A1333] p-4 shadow-2xs flex flex-col justify-between">
+              <div className="rounded-xl border border-[#E1D4C2] dark:border-[#6E473B] bg-white/95 dark:bg-[#362215] p-4 shadow-2xs flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-semibold text-stone-600 dark:text-[#8BA3C7] uppercase tracking-wider">
+                    <span className="font-mono text-xs font-semibold text-[#6E473B] dark:text-[#BEB5A9] uppercase tracking-wider">
                       Daily Habit Streak
                     </span>
-                    <Flame className={`h-4 w-4 ${streakDisplay > 0 ? 'text-orange-500 fill-orange-500/20' : 'text-stone-300 dark:text-stone-600'}`} />
+                    <Flame className={`h-4 w-4 ${streakDisplay > 0 ? 'text-orange-500 fill-orange-500/20' : 'text-stone-300 dark:text-[#A78D78]'}`} />
                   </div>
 
                   <div className="mt-2 flex items-baseline gap-2">
-                    <span className="font-mono text-3xl font-extrabold text-stone-900 dark:text-[#D4E4EC] tracking-tight">
+                    <span className="font-mono text-3xl font-extrabold text-[#291C0E] dark:text-[#E1D4C2] tracking-tight">
                       {streakDisplay}
                     </span>
-                    <span className="font-mono text-xs text-stone-600 dark:text-[#8BA3C7] uppercase">Days Active</span>
+                    <span className="font-mono text-xs text-[#6E473B] dark:text-[#BEB5A9] uppercase">Days Active</span>
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-stone-100 dark:border-[#1A3F75] flex items-center justify-between">
+                <div className="mt-4 pt-3 border-t border-[#E1D4C2] dark:border-[#6E473B] flex items-center justify-between">
                   {/* 7-Day Matrix */}
                   <div className="flex items-center gap-1.5">
                     {dayLabels.map((day, i) => (
                       <div key={i} className="flex flex-col items-center gap-1">
-                        <span className="font-mono text-[9px] text-stone-400 dark:text-[#8BA3C7]">{day}</span>
+                        <span className="font-mono text-[9px] text-[#A78D78] dark:text-[#BEB5A9]">{day}</span>
                         <div
                           className={`h-2.5 w-2.5 rounded-xs border ${
                             i === 6 && isReadToday
                               ? 'border-orange-500 bg-orange-500 shadow-2xs'
                               : i < Math.min(6, streakDisplay)
-                              ? 'border-stone-800 dark:border-amber-500 bg-stone-800 dark:bg-amber-500'
-                              : 'border-stone-200 dark:border-[#1A3F75] bg-stone-100 dark:bg-[#13264D]'
+                              ? 'border-[#291C0E] dark:border-amber-500 bg-[#291C0E] dark:bg-amber-500'
+                              : 'border-[#E1D4C2] dark:border-[#6E473B] bg-stone-100 dark:bg-[#482D1E]'
                           }`}
                         />
                       </div>
@@ -313,8 +311,8 @@ function HomePageContent() {
                   <span
                     className={`font-mono text-[9px] font-bold px-2 py-0.5 rounded border uppercase ${
                       isReadToday
-                        ? 'border-emerald-300 dark:border-emerald-500/40 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
-                        : 'border-amber-300 dark:border-amber-500/40 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300'
+                        ? 'border-emerald-300 dark:border-emerald-500/40 bg-emerald-50 dark:bg-[#482D1E] text-emerald-700 dark:text-emerald-300'
+                        : 'border-amber-300 dark:border-amber-500/40 bg-amber-50 dark:bg-[#482D1E] text-amber-700 dark:text-amber-300'
                     }`}
                   >
                     {isReadToday ? 'Read Today 🔥' : 'Reading Pending ⏳'}
@@ -323,28 +321,28 @@ function HomePageContent() {
               </div>
 
               {/* Card 2: Scholar Tier & XP Leveling */}
-              <div className="rounded-xl border border-stone-200 dark:border-[#1A3F75] bg-white/95 dark:bg-[#0A1333] p-4 shadow-2xs flex flex-col justify-between">
+              <div className="rounded-xl border border-[#E1D4C2] dark:border-[#6E473B] bg-white/95 dark:bg-[#362215] p-4 shadow-2xs flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-semibold text-stone-600 dark:text-[#8BA3C7] uppercase tracking-wider">
+                    <span className="font-mono text-xs font-semibold text-[#6E473B] dark:text-[#BEB5A9] uppercase tracking-wider">
                       Scholar Tier {levelInfo.level}
                     </span>
-                    <Award className="h-4 w-4 text-amber-500" />
+                    <AwardBadge className="h-4 w-4 text-amber-500" />
                   </div>
 
                   <div className="mt-2">
-                    <div className="font-mono text-base font-black text-stone-900 dark:text-[#D4E4EC] uppercase">
+                    <div className="font-mono text-base font-black text-[#291C0E] dark:text-[#E1D4C2] uppercase">
                       {levelInfo.title}
                     </div>
-                    <div className="flex items-center justify-between font-mono text-[10px] text-stone-500 dark:text-[#8BA3C7] mt-1">
+                    <div className="flex items-center justify-between font-mono text-[10px] text-[#7A6652] dark:text-[#BEB5A9] mt-1">
                       <span className="flex items-center gap-1 font-bold text-amber-700 dark:text-amber-400">
-                        <Sparkles className="h-3 w-3 text-amber-500" />
+                        <AwardBadge className="h-3.5 w-3.5 text-amber-500" />
                         {currentTotalXp} XP
                       </span>
                       <span>{levelInfo.maxXp} XP Next</span>
                     </div>
 
-                    <div className="h-1.5 w-full bg-stone-200 dark:bg-[#1A3F75] rounded-full overflow-hidden mt-1.5">
+                    <div className="h-1.5 w-full bg-[#E1D4C2] dark:border-[#6E473B] dark:bg-[#482D1E] rounded-full overflow-hidden mt-1.5">
                       <div
                         className="h-full bg-amber-500 transition-all duration-500"
                         style={{ width: `${levelInfo.progressPercent}%` }}
@@ -353,44 +351,44 @@ function HomePageContent() {
                   </div>
                 </div>
 
-                <div className="mt-3 pt-2 border-t border-stone-100 dark:border-[#1A3F75] flex items-center justify-between">
+                <div className="mt-3 pt-2 border-t border-[#E1D4C2] dark:border-[#6E473B] flex items-center justify-between">
                   <button
                     onClick={() => setShowAchievements(true)}
                     className="inline-flex items-center gap-1 font-mono text-[10px] font-bold text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-200 underline uppercase tracking-wider"
                   >
                     <span>View Badges & Accolades &rarr;</span>
                   </button>
-                  <span className="font-mono text-[9px] text-stone-400 dark:text-[#8BA3C7]">
+                  <span className="font-mono text-[9px] text-[#A78D78] dark:text-[#BEB5A9]">
                     +{levelInfo.maxXp - currentTotalXp} XP to Tier {levelInfo.level + 1}
                   </span>
                 </div>
               </div>
 
               {/* Card 3: Active Dispatches */}
-              <div className="rounded-xl border border-stone-200 dark:border-[#1A3F75] bg-white/95 dark:bg-[#0A1333] p-4 shadow-2xs flex flex-col justify-between">
+              <div className="rounded-xl border border-[#E1D4C2] dark:border-[#6E473B] bg-white/95 dark:bg-[#362215] p-4 shadow-2xs flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-semibold text-stone-600 dark:text-[#8BA3C7] uppercase tracking-wider">
+                    <span className="font-mono text-xs font-semibold text-[#6E473B] dark:text-[#BEB5A9] uppercase tracking-wider">
                       Subscribed Topics
                     </span>
-                    <BookOpen className="h-4 w-4 text-blue-500" />
+                    <BookOpen className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                   </div>
 
                   <div className="mt-2 flex items-baseline gap-2">
-                    <span className="font-mono text-3xl font-extrabold text-stone-900 dark:text-[#D4E4EC] tracking-tight">
+                    <span className="font-mono text-3xl font-extrabold text-[#291C0E] dark:text-[#E1D4C2] tracking-tight">
                       {userCategories.length}
                     </span>
-                    <span className="font-mono text-xs text-stone-600 dark:text-[#8BA3C7] uppercase">Active Topics</span>
+                    <span className="font-mono text-xs text-[#6E473B] dark:text-[#BEB5A9] uppercase">Active Topics</span>
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-stone-100 dark:border-[#1A3F75] flex items-center justify-between">
-                  <span className="font-mono text-[10px] text-stone-400 dark:text-[#8BA3C7] uppercase">
+                <div className="mt-4 pt-3 border-t border-[#E1D4C2] dark:border-[#6E473B] flex items-center justify-between">
+                  <span className="font-mono text-[10px] text-[#A78D78] dark:text-[#BEB5A9] uppercase">
                     {articles.length} dispatches in feed
                   </span>
                   <Link
                     href="/topics"
-                    className="font-mono text-[10px] font-bold text-stone-700 dark:text-[#D4E4EC] hover:text-stone-950 dark:hover:text-white underline uppercase"
+                    className="font-mono text-[10px] font-bold text-[#291C0E] dark:text-[#E1D4C2] hover:text-[#6E473B] dark:hover:text-white underline uppercase"
                   >
                     Manage &rarr;
                   </Link>
@@ -402,12 +400,12 @@ function HomePageContent() {
 
         {/* Selected Interests Pill Bar with Priority Badges */}
         {user && userCategories.length > 0 && (
-          <section className="rounded-xl border border-stone-200 dark:border-[#1A3F75] bg-white/90 dark:bg-[#0A1333]/90 p-4 shadow-2xs">
-            <div className="flex items-center justify-between mb-3 border-b border-stone-100 dark:border-[#1A3F75] pb-2">
-              <span className="font-mono text-xs font-bold uppercase tracking-wider text-stone-600 dark:text-[#D4E4EC]">
+          <section className="rounded-xl border border-[#E1D4C2] dark:border-[#6E473B] bg-white/90 dark:bg-[#362215]/90 p-4 shadow-2xs">
+            <div className="flex items-center justify-between mb-3 border-b border-[#E1D4C2] dark:border-[#6E473B] pb-2">
+              <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#6E473B] dark:text-[#E1D4C2]">
                 Active Interests & Priorities
               </span>
-              <Link href="/topics" className="font-mono text-xs text-stone-600 dark:text-[#8BA3C7] hover:text-stone-900 dark:hover:text-white underline">
+              <Link href="/topics" className="font-mono text-xs text-[#6E473B] dark:text-[#BEB5A9] hover:text-[#291C0E] dark:hover:text-white underline">
                 Edit Priorities &rarr;
               </Link>
             </div>
@@ -419,14 +417,14 @@ function HomePageContent() {
                     key={idx}
                     className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 font-mono text-xs font-medium ${
                       isHigh
-                        ? 'border-amber-300 dark:border-amber-500/50 bg-amber-50/80 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300'
-                        : 'border-stone-200 dark:border-[#1A3F75] bg-stone-50 dark:bg-[#13264D] text-stone-800 dark:text-[#D4E4EC]'
+                        ? 'border-amber-300 dark:border-amber-500/50 bg-amber-50/80 dark:bg-[#482D1E] text-amber-800 dark:text-amber-300'
+                        : 'border-[#E1D4C2] dark:border-[#6E473B] bg-[#F5EFEB] dark:bg-[#482D1E] text-[#291C0E] dark:text-[#E1D4C2]'
                     }`}
                   >
                     {isHigh ? (
                       <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
                     ) : (
-                      <CheckCircle2 className="h-3 w-3 text-stone-500 dark:text-[#8BA3C7]" />
+                      <CheckCircle2 className="h-3 w-3 text-[#A78D78] dark:text-[#BEB5A9]" />
                     )}
                     <span>{item.categories?.name || 'Topic'}</span>
                     {isHigh && <span className="text-[10px] opacity-75">(2x)</span>}
@@ -439,13 +437,13 @@ function HomePageContent() {
 
         {/* Live Observation Ledger: Today's Nuggets Feed */}
         <section className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-stone-200 dark:border-[#1A3F75] pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-[#E1D4C2] dark:border-[#6E473B] pb-3">
             <div>
-              <h2 className="font-mono text-base font-extrabold text-stone-900 dark:text-[#D4E4EC] uppercase tracking-tight flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-amber-500" />
+              <h2 className="font-mono text-base font-extrabold text-[#291C0E] dark:text-[#E1D4C2] uppercase tracking-tight flex items-center gap-2">
+                <AwardBadge className="h-4 w-4 text-amber-500 fill-amber-500/20" />
                 Today&apos;s Verified Nuggets
               </h2>
-              <p className="text-xs text-stone-500 dark:text-[#8BA3C7] mt-0.5 font-sans">
+              <p className="text-xs text-[#6E473B] dark:text-[#BEB5A9] mt-0.5 font-sans">
                 Curated, multi-source verified summaries aligned with your subscribed topics and priority weighting.
               </p>
             </div>
@@ -454,27 +452,27 @@ function HomePageContent() {
               <button
                 onClick={handleRefresh}
                 disabled={loadingArticles}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-stone-300 dark:border-[#1A3F75] bg-white dark:bg-[#0A1333] px-3 py-1 font-mono text-xs text-stone-600 dark:text-[#D4E4EC] hover:bg-stone-50 dark:hover:bg-[#13264D] disabled:opacity-50 transition uppercase tracking-wider"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-[#E1D4C2] dark:border-[#6E473B] bg-white dark:bg-[#362215] px-3 py-1 font-mono text-xs text-[#291C0E] dark:text-[#E1D4C2] hover:bg-[#E1D4C2]/40 dark:hover:bg-[#482D1E] disabled:opacity-50 transition uppercase tracking-wider"
                 title="Sync Feeds"
               >
                 <RefreshCw className={`h-3 w-3 ${loadingArticles ? 'animate-spin' : ''}`} />
                 <span>Sync</span>
               </button>
 
-              <span className="font-mono text-[10px] text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/40 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded uppercase">
+              <span className="font-mono text-[10px] text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/40 bg-emerald-50 dark:bg-[#482D1E] px-2 py-0.5 rounded uppercase">
                 Status: Ingestion Active
               </span>
             </div>
           </div>
 
-          {/* Filter Pills with Saved Tab (Step 10 Personalization) */}
+          {/* Filter Pills with Saved Tab */}
           <div className="flex flex-wrap items-center gap-1.5 pb-1">
             <button
               onClick={() => setSelectedFilter('ALL')}
               className={`rounded-lg px-3 py-1 font-mono text-xs uppercase tracking-wider transition ${
                 selectedFilter === 'ALL'
-                  ? 'border border-stone-900 dark:border-[#3B628A] bg-stone-900 dark:bg-[#1A3F75] text-white font-bold'
-                  : 'border border-stone-200 dark:border-[#1A3F75] bg-white dark:bg-[#0A1333] text-stone-600 dark:text-[#8BA3C7] hover:border-stone-400 dark:hover:border-[#3B628A]'
+                  ? 'border border-[#291C0E] dark:border-[#A78D78] bg-[#291C0E] dark:bg-[#6E473B] text-white font-bold'
+                  : 'border border-[#E1D4C2] dark:border-[#6E473B] bg-white dark:bg-[#362215] text-[#6E473B] dark:text-[#BEB5A9] hover:border-[#A78D78]'
               }`}
             >
               All ({articles.length})
@@ -486,7 +484,7 @@ function HomePageContent() {
               className={`inline-flex items-center gap-1 rounded-lg px-3 py-1 font-mono text-xs uppercase tracking-wider transition ${
                 selectedFilter === 'SAVED'
                   ? 'border border-amber-600 bg-amber-600 dark:border-amber-500 dark:bg-amber-600 text-white font-bold'
-                  : 'border border-stone-200 dark:border-[#1A3F75] bg-white dark:bg-[#0A1333] text-stone-600 dark:text-[#8BA3C7] hover:border-stone-400 dark:hover:border-[#3B628A]'
+                  : 'border border-[#E1D4C2] dark:border-[#6E473B] bg-white dark:bg-[#362215] text-[#6E473B] dark:text-[#BEB5A9] hover:border-[#A78D78]'
               }`}
             >
               <Bookmark className={`h-3 w-3 ${selectedFilter === 'SAVED' ? 'fill-white' : ''}`} />
@@ -504,8 +502,8 @@ function HomePageContent() {
                   onClick={() => setSelectedFilter(name)}
                   className={`rounded-lg px-3 py-1 font-mono text-xs uppercase tracking-wider transition ${
                     isSelected
-                      ? 'border border-stone-900 dark:border-[#3B628A] bg-stone-900 dark:bg-[#1A3F75] text-white font-bold'
-                      : 'border border-stone-200 dark:border-[#1A3F75] bg-white dark:bg-[#0A1333] text-stone-600 dark:text-[#8BA3C7] hover:border-stone-400 dark:hover:border-[#3B628A]'
+                      ? 'border border-[#291C0E] dark:border-[#A78D78] bg-[#291C0E] dark:bg-[#6E473B] text-white font-bold'
+                      : 'border border-[#E1D4C2] dark:border-[#6E473B] bg-white dark:bg-[#362215] text-[#6E473B] dark:text-[#BEB5A9] hover:border-[#A78D78]'
                   }`}
                 >
                   {name} ({count})
@@ -516,9 +514,9 @@ function HomePageContent() {
 
           {/* Articles Stream */}
           {loadingArticles ? (
-            <div className="rounded-2xl border border-stone-200 dark:border-[#1A3F75] bg-white dark:bg-[#0A1333] p-12 text-center graph-paper-bg">
-              <RefreshCw className="h-6 w-6 animate-spin mx-auto text-stone-400 dark:text-[#8BA3C7] mb-3" />
-              <div className="font-mono text-xs text-stone-600 dark:text-[#D4E4EC] uppercase tracking-widest">
+            <div className="rounded-2xl border border-[#E1D4C2] dark:border-[#6E473B] bg-white dark:bg-[#362215] p-12 text-center graph-paper-bg">
+              <RefreshCw className="h-6 w-6 animate-spin mx-auto text-[#A78D78] dark:text-[#BEB5A9] mb-3" />
+              <div className="font-mono text-xs text-[#291C0E] dark:text-[#E1D4C2] uppercase tracking-widest">
                 Curating multi-source news stories...
               </div>
             </div>
@@ -536,27 +534,27 @@ function HomePageContent() {
                 return (
                   <article
                     key={idx}
-                    className="group relative flex flex-col justify-between rounded-xl border border-stone-200 dark:border-[#1A3F75] bg-white/95 dark:bg-[#0A1333] p-5 shadow-2xs hover:border-stone-900 dark:hover:border-[#3B628A] hover:shadow-xs transition-all"
+                    className="group relative flex flex-col justify-between rounded-xl border border-[#E1D4C2] dark:border-[#6E473B] bg-white/95 dark:bg-[#362215] p-5 shadow-2xs hover:border-[#291C0E] dark:hover:border-[#A78D78] hover:shadow-xs transition-all"
                   >
                     <div>
                       {/* Top Metadata Line */}
                       <div className="flex items-center justify-between gap-2 mb-3">
-                        <span className="font-mono text-[10px] font-bold uppercase tracking-wider rounded border border-stone-200 dark:border-[#1A3F75] bg-stone-100 dark:bg-[#13264D] px-2 py-0.5 text-stone-800 dark:text-[#D4E4EC]">
+                        <span className="font-mono text-[10px] font-bold uppercase tracking-wider rounded border border-[#E1D4C2] dark:border-[#6E473B] bg-[#F5EFEB] dark:bg-[#482D1E] px-2 py-0.5 text-[#291C0E] dark:text-[#E1D4C2]">
                           {article.category}
                         </span>
 
                         <div className="flex items-center gap-2">
-                          <div className="flex items-center gap-1.5 font-mono text-[10px] text-stone-400 dark:text-[#8BA3C7] uppercase">
+                          <div className="flex items-center gap-1.5 font-mono text-[10px] text-[#A78D78] dark:text-[#BEB5A9] uppercase">
                             <span>{article.sourceName}</span>
                             <span>•</span>
                             <span>{dateStr}</span>
                           </div>
 
-                          {/* Quick Bookmark Toggle (Step 10 Personalization) */}
+                          {/* Quick Bookmark Toggle */}
                           <button
                             onClick={() => handleToggleBookmark(article)}
                             title={isSaved ? 'Remove bookmark' : 'Save for later'}
-                            className="p-1 rounded text-stone-400 hover:text-stone-700 dark:hover:text-white transition"
+                            className="p-1 rounded text-stone-400 hover:text-[#291C0E] dark:hover:text-white transition"
                           >
                             <Bookmark className={`h-3.5 w-3.5 ${isSaved ? 'fill-amber-500 text-amber-500' : ''}`} />
                           </button>
@@ -564,19 +562,19 @@ function HomePageContent() {
                       </div>
 
                       {/* Headline */}
-                      <h3 className="font-sans text-base font-bold text-stone-900 dark:text-[#D4E4EC] leading-snug group-hover:text-amber-700 dark:group-hover:text-amber-400 transition">
+                      <h3 className="font-sans text-base font-bold text-[#291C0E] dark:text-[#E1D4C2] leading-snug group-hover:text-amber-700 dark:group-hover:text-amber-400 transition">
                         {article.title}
                       </h3>
 
                       {/* Bite-sized summary */}
-                      <p className="mt-2 text-xs text-stone-600 dark:text-[#8BA3C7] leading-relaxed font-sans line-clamp-3">
+                      <p className="mt-2 text-xs text-[#6E473B] dark:text-[#BEB5A9] leading-relaxed font-sans line-clamp-3">
                         {article.summary || 'Summary unavailable. Click to read the full source.'}
                       </p>
                     </div>
 
                     {/* Footer / Transparency Badge */}
-                    <div className="mt-4 pt-3 border-t border-stone-100 dark:border-[#1A3F75] flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 font-mono text-[10px] text-emerald-700 dark:text-emerald-400">
+                    <div className="mt-4 pt-3 border-t border-[#E1D4C2] dark:border-[#6E473B] flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 font-mono text-[10px] text-emerald-700 dark:text-emerald-300">
                         <CheckCircle2 className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
                         <span>Verified Source</span>
                       </div>
@@ -586,7 +584,7 @@ function HomePageContent() {
                           href={article.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-1.5 rounded-lg text-stone-400 dark:text-[#8BA3C7] hover:text-stone-700 dark:hover:text-white hover:bg-stone-100 dark:hover:bg-[#13264D] transition"
+                          className="p-1.5 rounded-lg text-stone-400 dark:text-[#BEB5A9] hover:text-[#291C0E] dark:hover:text-white hover:bg-[#E1D4C2]/40 dark:hover:bg-[#482D1E] transition"
                           title="Open original source dispatch"
                         >
                           <ExternalLink className="h-3.5 w-3.5" />
@@ -594,7 +592,7 @@ function HomePageContent() {
 
                         <button
                           onClick={() => setSelectedArticle(article)}
-                          className="inline-flex items-center gap-1.5 rounded-lg border border-stone-800 dark:border-[#3B628A] bg-stone-900 dark:bg-[#1A3F75] px-3 py-1 font-mono text-xs font-bold text-white shadow-2xs hover:bg-stone-800 dark:hover:bg-[#13264D] transition uppercase tracking-wider"
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-[#291C0E] dark:border-[#A78D78] bg-[#291C0E] dark:bg-[#6E473B] px-3 py-1 font-mono text-xs font-bold text-white shadow-2xs hover:bg-[#6E473B] dark:hover:bg-[#482D1E] transition uppercase tracking-wider"
                         >
                           <span>Read Nugget</span>
                           <ArrowRight className="h-3 w-3" />
@@ -606,18 +604,18 @@ function HomePageContent() {
               })}
             </div>
           ) : (
-            <div className="rounded-2xl border-2 border-dashed border-stone-300 dark:border-[#1A3F75] bg-white/70 dark:bg-[#0A1333]/70 p-8 sm:p-12 text-center graph-paper-bg">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl border border-stone-300 dark:border-[#1A3F75] bg-white dark:bg-[#0A1333] text-stone-700 dark:text-[#D4E4EC] mb-4 shadow-2xs">
+            <div className="rounded-2xl border-2 border-dashed border-[#BEB5A9] dark:border-[#6E473B] bg-white/70 dark:bg-[#362215]/70 p-8 sm:p-12 text-center graph-paper-bg">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl border border-[#E1D4C2] dark:border-[#6E473B] bg-white dark:bg-[#362215] text-[#291C0E] dark:text-[#E1D4C2] mb-4 shadow-2xs">
                 {selectedFilter === 'SAVED' ? (
                   <Bookmark className="h-6 w-6 text-amber-500" />
                 ) : (
                   <Newspaper className="h-6 w-6" />
                 )}
               </div>
-              <h3 className="font-mono text-sm font-bold text-stone-900 dark:text-[#D4E4EC] uppercase tracking-wider">
+              <h3 className="font-mono text-sm font-bold text-[#291C0E] dark:text-[#E1D4C2] uppercase tracking-wider">
                 {selectedFilter === 'SAVED' ? 'No Saved Nuggets Yet' : 'No Dispatches Found'}
               </h3>
-              <p className="max-w-md mx-auto text-xs text-stone-600 dark:text-[#8BA3C7] mt-2 leading-relaxed font-sans">
+              <p className="max-w-md mx-auto text-xs text-[#6E473B] dark:text-[#BEB5A9] mt-2 leading-relaxed font-sans">
                 {selectedFilter === 'SAVED'
                   ? 'Click the bookmark icon on any article in your feed to save it for quick review here.'
                   : "No active dispatches found for your selected topic. Click 'Sync' above or configure additional topics."}
@@ -627,33 +625,33 @@ function HomePageContent() {
         </section>
 
         {/* Academic / Architectural Standards */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-stone-200 dark:border-[#1A3F75]">
-          <div className="rounded-xl border border-stone-200 dark:border-[#1A3F75] bg-white/80 dark:bg-[#0A1333]/80 p-4">
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-[#E1D4C2] dark:border-[#6E473B]">
+          <div className="rounded-xl border border-[#E1D4C2] dark:border-[#6E473B] bg-white/80 dark:bg-[#362215]/80 p-4">
             <div className="flex items-center gap-2 mb-2">
               <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-              <h4 className="font-mono text-xs font-bold text-stone-900 dark:text-[#D4E4EC] uppercase">Multi-Source Verification</h4>
+              <h4 className="font-mono text-xs font-bold text-[#291C0E] dark:text-[#E1D4C2] uppercase">Multi-Source Verification</h4>
             </div>
-            <p className="text-xs text-stone-500 dark:text-[#8BA3C7] leading-relaxed">
+            <p className="text-xs text-[#6E473B] dark:text-[#BEB5A9] leading-relaxed">
               Every factual assertion links back to cross-checked primary sources with total transparency.
             </p>
           </div>
 
-          <div className="rounded-xl border border-stone-200 dark:border-[#1A3F75] bg-white/80 dark:bg-[#0A1333]/80 p-4">
+          <div className="rounded-xl border border-[#E1D4C2] dark:border-[#6E473B] bg-white/80 dark:bg-[#362215]/80 p-4">
             <div className="flex items-center gap-2 mb-2">
               <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-              <h4 className="font-mono text-xs font-bold text-stone-900 dark:text-[#D4E4EC] uppercase">3-Minute Briefings</h4>
+              <h4 className="font-mono text-xs font-bold text-[#291C0E] dark:text-[#E1D4C2] uppercase">3-Minute Briefings</h4>
             </div>
-            <p className="text-xs text-stone-500 dark:text-[#8BA3C7] leading-relaxed">
+            <p className="text-xs text-[#6E473B] dark:text-[#BEB5A9] leading-relaxed">
               Condenses complex breaking developments into fast, respectful reads built for high retention.
             </p>
           </div>
 
-          <div className="rounded-xl border border-stone-200 dark:border-[#1A3F75] bg-white/80 dark:bg-[#0A1333]/80 p-4">
+          <div className="rounded-xl border border-[#E1D4C2] dark:border-[#6E473B] bg-white/80 dark:bg-[#362215]/80 p-4">
             <div className="flex items-center gap-2 mb-2">
-              <FileCheck2 className="h-4 w-4 text-stone-700 dark:text-stone-300" />
-              <h4 className="font-mono text-xs font-bold text-stone-900 dark:text-[#D4E4EC] uppercase">Zero Quiz Friction</h4>
+              <FileCheck2 className="h-4 w-4 text-[#6E473B] dark:text-[#BEB5A9]" />
+              <h4 className="font-mono text-xs font-bold text-[#291C0E] dark:text-[#E1D4C2] uppercase">Zero Quiz Friction</h4>
             </div>
-            <p className="text-xs text-stone-500 dark:text-[#8BA3C7] leading-relaxed">
+            <p className="text-xs text-[#6E473B] dark:text-[#BEB5A9] leading-relaxed">
               Streaks and XP are earned through deliberate reading sessions, not multiple-choice trivia.
             </p>
           </div>
@@ -688,8 +686,8 @@ export default function HomePage() {
         <div className="min-h-screen flex flex-col">
           <Navbar />
           <main className="flex-1 flex items-center justify-center p-4">
-            <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-widest text-stone-500 animate-pulse">
-              <Sparkles className="h-4 w-4 animate-spin text-amber-500" />
+            <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-widest text-[#7A6652] dark:text-[#BEB5A9] animate-pulse">
+              <AwardBadge className="h-5 w-5 animate-spin text-amber-500" />
               <span>Loading NUGGET...</span>
             </div>
           </main>

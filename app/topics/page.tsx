@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Navbar from '@/components/Navbar';
+import AwardBadge from '@/components/AwardBadge';
 import {
   Cpu,
   FlaskConical,
@@ -19,7 +20,6 @@ import {
   AlertCircle,
   ArrowRight,
   BookOpen,
-  Compass,
   Save,
   Star
 } from 'lucide-react';
@@ -197,8 +197,8 @@ export default function TopicsPage() {
       <div className="min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-1 flex items-center justify-center p-4">
-          <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-widest text-stone-500 dark:text-[#8BA3C7] animate-pulse">
-            <Compass className="h-4 w-4 animate-spin text-amber-500" />
+          <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-widest text-[#7A6652] dark:text-[#BEB5A9] animate-pulse">
+            <AwardBadge className="h-5 w-5 animate-spin text-amber-500" />
             <span>Loading topic taxonomy and preferences...</span>
           </div>
         </main>
@@ -211,16 +211,16 @@ export default function TopicsPage() {
       <Navbar />
       <main className="flex-1 max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 border-b border-stone-200 dark:border-[#1A3F75] pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 border-b border-[#E1D4C2] dark:border-[#6E473B] pb-4">
           <div>
             <div className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-widest mb-1.5">
-              <Compass className="h-3.5 w-3.5" />
+              <AwardBadge className="h-3.5 w-3.5 text-amber-500" />
               <span>Curated Knowledge Taxonomy</span>
             </div>
-            <h1 className="font-mono text-2xl sm:text-3xl font-black text-stone-900 dark:text-[#D4E4EC] uppercase tracking-tight">
+            <h1 className="font-mono text-2xl sm:text-3xl font-black text-[#291C0E] dark:text-[#E1D4C2] uppercase tracking-tight">
               Topic Subscriptions
             </h1>
-            <p className="text-xs text-stone-600 dark:text-[#8BA3C7] mt-1 font-sans">
+            <p className="text-xs text-[#6E473B] dark:text-[#BEB5A9] mt-1 font-sans">
               Choose your focus areas and set priority levels to tune your daily briefing feed.
             </p>
           </div>
@@ -229,14 +229,14 @@ export default function TopicsPage() {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-stone-900 dark:border-[#3B628A] bg-stone-900 dark:bg-[#1A3F75] px-4 py-2 font-mono text-xs font-bold text-white shadow-2xs hover:bg-stone-800 dark:hover:bg-[#13264D] disabled:opacity-50 transition uppercase tracking-wider"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-[#291C0E] dark:border-[#A78D78] bg-[#291C0E] dark:bg-[#6E473B] px-4 py-2 font-mono text-xs font-bold text-white shadow-2xs hover:bg-[#6E473B] dark:hover:bg-[#482D1E] disabled:opacity-50 transition uppercase tracking-wider"
             >
               <Save className="h-3.5 w-3.5" />
               <span>{saving ? 'Saving...' : 'Save Preferences'}</span>
             </button>
             <button
               onClick={() => router.push('/')}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-stone-300 dark:border-[#1A3F75] bg-white dark:bg-[#0A1333] px-3.5 py-2 font-mono text-xs font-semibold text-stone-700 dark:text-[#D4E4EC] hover:bg-stone-50 dark:hover:bg-[#13264D] transition uppercase tracking-wider"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-[#E1D4C2] dark:border-[#6E473B] bg-white dark:bg-[#362215] px-3.5 py-2 font-mono text-xs font-semibold text-[#291C0E] dark:text-[#E1D4C2] hover:bg-[#E1D4C2]/40 dark:hover:bg-[#482D1E] transition uppercase tracking-wider"
             >
               <span>Dashboard</span>
               <ArrowRight className="h-3.5 w-3.5" />
@@ -248,7 +248,7 @@ export default function TopicsPage() {
           <div
             className={`mb-6 flex items-center gap-2 rounded-xl border p-3.5 font-mono text-xs ${
               message.type === 'success'
-                ? 'border-emerald-300 dark:border-emerald-500/40 bg-emerald-50/90 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200'
+                ? 'border-emerald-300 dark:border-emerald-500/40 bg-emerald-50/90 dark:bg-[#482D1E] text-emerald-800 dark:text-emerald-300'
                 : 'border-rose-300 dark:border-rose-500/40 bg-rose-50/90 dark:bg-rose-950/40 text-rose-800 dark:text-rose-200'
             }`}
           >
@@ -274,8 +274,8 @@ export default function TopicsPage() {
                 onClick={() => toggleCategory(cat.id)}
                 className={`relative cursor-pointer rounded-xl p-4 border transition-all select-none flex flex-col justify-between ${
                   isSelected
-                    ? 'border-stone-900 dark:border-[#3B628A] bg-white dark:bg-[#0A1333] shadow-xs ring-1 ring-stone-900 dark:ring-[#3B628A]'
-                    : 'border-stone-200 dark:border-[#1A3F75] bg-white/80 dark:bg-[#0A1333]/60 hover:border-stone-400 dark:hover:border-[#3B628A] hover:bg-white dark:hover:bg-[#0A1333]'
+                    ? 'border-[#291C0E] dark:border-[#A78D78] bg-white dark:bg-[#362215] shadow-xs ring-1 ring-[#291C0E] dark:ring-[#A78D78]'
+                    : 'border-[#E1D4C2] dark:border-[#6E473B] bg-white/80 dark:bg-[#362215]/60 hover:border-[#BEB5A9] dark:hover:border-[#A78D78] hover:bg-white dark:hover:bg-[#362215]'
                 }`}
               >
                 <div>
@@ -284,13 +284,13 @@ export default function TopicsPage() {
                       <div
                         className={`flex h-8 w-8 items-center justify-center rounded-lg border transition ${
                           isSelected
-                            ? 'border-stone-900 dark:border-[#3B628A] bg-stone-900 dark:bg-[#1A3F75] text-white'
-                            : 'border-stone-200 dark:border-[#1A3F75] bg-stone-100 dark:bg-[#13264D] text-stone-600 dark:text-[#8BA3C7]'
+                            ? 'border-[#291C0E] dark:border-[#A78D78] bg-[#291C0E] dark:bg-[#6E473B] text-white'
+                            : 'border-[#E1D4C2] dark:border-[#6E473B] bg-[#F5EFEB] dark:bg-[#482D1E] text-[#6E473B] dark:text-[#BEB5A9]'
                         }`}
                       >
                         {icon}
                       </div>
-                      <span className="font-mono text-xs font-bold text-stone-900 dark:text-[#D4E4EC]">
+                      <span className="font-mono text-xs font-bold text-[#291C0E] dark:text-[#E1D4C2]">
                         {cat.name}
                       </span>
                     </div>
@@ -298,23 +298,23 @@ export default function TopicsPage() {
                     <div
                       className={`flex h-5 w-5 items-center justify-center rounded border font-mono text-[10px] transition ${
                         isSelected
-                          ? 'border-stone-900 dark:border-[#3B628A] bg-stone-900 dark:bg-[#1A3F75] text-white font-bold'
-                          : 'border-stone-300 dark:border-[#1A3F75] bg-white dark:bg-[#0A1333] text-transparent'
+                          ? 'border-[#291C0E] dark:border-[#A78D78] bg-[#291C0E] dark:bg-[#6E473B] text-white font-bold'
+                          : 'border-[#E1D4C2] dark:border-[#6E473B] bg-white dark:bg-[#362215] text-transparent'
                       }`}
                     >
                       <Check className="h-3 w-3" />
                     </div>
                   </div>
 
-                  <p className="text-xs text-stone-500 dark:text-[#8BA3C7] mt-2.5 line-clamp-2 font-sans">
+                  <p className="text-xs text-[#6E473B] dark:text-[#BEB5A9] mt-2.5 line-clamp-2 font-sans">
                     {cat.description || `Curated, verified daily nuggets in ${cat.name.toLowerCase()}.`}
                   </p>
                 </div>
 
-                {/* Priority Tuning Controls (Step 10 Personalization) */}
+                {/* Priority Tuning Controls */}
                 {isSelected && (
-                  <div className="mt-3.5 pt-2.5 border-t border-stone-100 dark:border-[#1A3F75] flex items-center justify-between">
-                    <span className="font-mono text-[10px] text-stone-400 dark:text-[#8BA3C7]">
+                  <div className="mt-3.5 pt-2.5 border-t border-[#E1D4C2] dark:border-[#6E473B] flex items-center justify-between">
+                    <span className="font-mono text-[10px] text-[#A78D78] dark:text-[#BEB5A9]">
                       Weight:
                     </span>
                     <button
@@ -323,8 +323,8 @@ export default function TopicsPage() {
                       title="Click to toggle priority weighting"
                       className={`inline-flex items-center gap-1 font-mono text-[10px] font-bold px-2 py-0.5 rounded border transition ${
                         isHighPriority
-                          ? 'border-amber-300 dark:border-amber-500/50 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300'
-                          : 'border-stone-200 dark:border-[#1A3F75] bg-stone-100 dark:bg-[#13264D] text-stone-600 dark:text-[#8BA3C7]'
+                          ? 'border-amber-300 dark:border-amber-500/50 bg-amber-50 dark:bg-[#482D1E] text-amber-700 dark:text-amber-300'
+                          : 'border-[#E1D4C2] dark:border-[#6E473B] bg-[#F5EFEB] dark:bg-[#482D1E] text-[#6E473B] dark:text-[#BEB5A9]'
                       }`}
                     >
                       <Star className={`h-2.5 w-2.5 ${isHighPriority ? 'fill-amber-400 text-amber-500' : ''}`} />
@@ -338,15 +338,15 @@ export default function TopicsPage() {
         </div>
 
         {/* Bottom Summary Bar */}
-        <div className="mt-6 rounded-xl border border-stone-200 dark:border-[#1A3F75] bg-white dark:bg-[#0A1333] p-4 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="font-mono text-xs text-stone-600 dark:text-[#8BA3C7]">
-            Active subscriptions: <span className="font-bold text-stone-900 dark:text-[#D4E4EC]">{selectedCategoryIds.size}</span> of{' '}
-            <span className="font-bold text-stone-900 dark:text-[#D4E4EC]">{categories.length}</span> topics
+        <div className="mt-6 rounded-xl border border-[#E1D4C2] dark:border-[#6E473B] bg-white dark:bg-[#362215] p-4 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="font-mono text-xs text-[#6E473B] dark:text-[#BEB5A9]">
+            Active subscriptions: <span className="font-bold text-[#291C0E] dark:text-[#E1D4C2]">{selectedCategoryIds.size}</span> of{' '}
+            <span className="font-bold text-[#291C0E] dark:text-[#E1D4C2]">{categories.length}</span> topics
           </div>
           <button
             onClick={handleSave}
             disabled={saving}
-            className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-stone-900 dark:border-[#3B628A] bg-stone-900 dark:bg-[#1A3F75] px-4 py-2 font-mono text-xs font-bold text-white shadow-2xs hover:bg-stone-800 dark:hover:bg-[#13264D] disabled:opacity-50 transition uppercase tracking-wider"
+            className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#291C0E] dark:border-[#A78D78] bg-[#291C0E] dark:bg-[#6E473B] px-4 py-2 font-mono text-xs font-bold text-white shadow-2xs hover:bg-[#6E473B] dark:hover:bg-[#482D1E] disabled:opacity-50 transition uppercase tracking-wider"
           >
             <Save className="h-3.5 w-3.5" />
             <span>{saving ? 'Saving...' : 'Save Preferences'}</span>

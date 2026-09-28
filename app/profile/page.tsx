@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Navbar from '@/components/Navbar';
-import { Save, Check, AlertCircle, Award, Flame, Calendar, User as UserIcon, Sparkles } from 'lucide-react';
+import AwardBadge from '@/components/AwardBadge';
+import { Save, Check, AlertCircle, Award, Flame, Calendar, User as UserIcon } from 'lucide-react';
 
 interface ProfileData {
   id: string;
@@ -119,8 +120,9 @@ export default function ProfilePage() {
       <div className="min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-1 flex items-center justify-center p-4">
-          <div className="font-mono text-xs uppercase tracking-widest text-stone-500 dark:text-[#8BA3C7] animate-pulse">
-            Loading researcher profile...
+          <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-widest text-[#7A6652] dark:text-[#BEB5A9] animate-pulse">
+            <AwardBadge className="h-5 w-5 animate-spin text-amber-500" />
+            <span>Loading researcher profile...</span>
           </div>
         </main>
       </div>
@@ -131,15 +133,15 @@ export default function ProfilePage() {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-1 max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8">
-        <div className="mb-6 border-b border-stone-200 dark:border-[#1A3F75] pb-4">
+        <div className="mb-6 border-b border-[#E1D4C2] dark:border-[#6E473B] pb-4">
           <div className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-widest mb-1.5">
             <UserIcon className="h-3.5 w-3.5" />
             <span>Scholar Identity & Preferences</span>
           </div>
-          <h1 className="font-mono text-2xl sm:text-3xl font-black text-stone-900 dark:text-[#D4E4EC] uppercase tracking-tight">
+          <h1 className="font-mono text-2xl sm:text-3xl font-black text-[#291C0E] dark:text-[#E1D4C2] uppercase tracking-tight">
             Researcher Profile
           </h1>
-          <p className="text-xs text-stone-600 dark:text-[#8BA3C7] mt-1 font-sans">
+          <p className="text-xs text-[#6E473B] dark:text-[#BEB5A9] mt-1 font-sans">
             Manage your credentials and inspect your telemetry and habit streaks.
           </p>
         </div>
@@ -148,7 +150,7 @@ export default function ProfilePage() {
           <div
             className={`mb-6 flex items-center gap-2 rounded-xl border p-3.5 font-mono text-xs ${
               statusMessage.type === 'success'
-                ? 'border-emerald-300 dark:border-emerald-500/40 bg-emerald-50/90 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200'
+                ? 'border-emerald-300 dark:border-emerald-500/40 bg-emerald-50/90 dark:bg-[#482D1E] text-emerald-800 dark:text-emerald-300'
                 : 'border-rose-300 dark:border-rose-500/40 bg-rose-50/90 dark:bg-rose-950/40 text-rose-800 dark:text-rose-200'
             }`}
           >
@@ -164,49 +166,49 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {/* Stats Column */}
           <div className="space-y-3">
-            <div className="rounded-xl border border-stone-200 dark:border-[#1A3F75] bg-white/95 dark:bg-[#0A1333] p-5 shadow-2xs">
-              <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-stone-400 dark:text-[#8BA3C7] block mb-3 border-b border-stone-100 dark:border-[#1A3F75] pb-2">
+            <div className="rounded-xl border border-[#E1D4C2] dark:border-[#6E473B] bg-white/95 dark:bg-[#362215] p-5 shadow-2xs">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#A78D78] dark:text-[#BEB5A9] block mb-3 border-b border-[#E1D4C2] dark:border-[#6E473B] pb-2">
                 Activity Telemetry
               </span>
 
               <div className="space-y-4">
                 <div>
-                  <div className="font-mono text-[10px] text-stone-400 dark:text-[#8BA3C7] uppercase flex items-center gap-1">
-                    <Sparkles className="h-3 w-3 text-amber-500" />
+                  <div className="font-mono text-[10px] text-[#A78D78] dark:text-[#BEB5A9] uppercase flex items-center gap-1.5">
+                    <AwardBadge className="h-3.5 w-3.5 text-amber-500" />
                     Total XP
                   </div>
-                  <div className="font-mono text-2xl font-black text-stone-900 dark:text-[#D4E4EC] mt-0.5">
-                    {profile?.total_xp ?? 0} <span className="text-xs font-normal text-stone-500 dark:text-[#8BA3C7]">XP</span>
+                  <div className="font-mono text-2xl font-black text-[#291C0E] dark:text-[#E1D4C2] mt-0.5">
+                    {profile?.total_xp ?? 0} <span className="text-xs font-normal text-[#A78D78] dark:text-[#BEB5A9]">XP</span>
                   </div>
                 </div>
 
                 <div>
-                  <div className="font-mono text-[10px] text-stone-400 dark:text-[#8BA3C7] uppercase flex items-center gap-1">
+                  <div className="font-mono text-[10px] text-[#A78D78] dark:text-[#BEB5A9] uppercase flex items-center gap-1">
                     <Flame className="h-3 w-3 text-orange-500" />
                     Current Streak
                   </div>
-                  <div className="font-mono text-2xl font-black text-stone-900 dark:text-[#D4E4EC] mt-0.5">
-                    {streakDisplay} <span className="text-xs font-normal text-stone-500 dark:text-[#8BA3C7]">DAYS</span>
+                  <div className="font-mono text-2xl font-black text-[#291C0E] dark:text-[#E1D4C2] mt-0.5">
+                    {streakDisplay} <span className="text-xs font-normal text-[#A78D78] dark:text-[#BEB5A9]">DAYS</span>
                   </div>
                 </div>
 
                 <div>
-                  <div className="font-mono text-[10px] text-stone-400 dark:text-[#8BA3C7] uppercase flex items-center gap-1">
+                  <div className="font-mono text-[10px] text-[#A78D78] dark:text-[#BEB5A9] uppercase flex items-center gap-1">
                     <Award className="h-3 w-3 text-purple-500" />
                     Longest Streak
                   </div>
-                  <div className="font-mono text-2xl font-black text-stone-900 dark:text-[#D4E4EC] mt-0.5">
+                  <div className="font-mono text-2xl font-black text-[#291C0E] dark:text-[#E1D4C2] mt-0.5">
                     {Math.max(streakDisplay, profile?.longest_streak ?? 0)}{' '}
-                    <span className="text-xs font-normal text-stone-500 dark:text-[#8BA3C7]">DAYS</span>
+                    <span className="text-xs font-normal text-[#A78D78] dark:text-[#BEB5A9]">DAYS</span>
                   </div>
                 </div>
 
-                <div className="border-t border-stone-100 dark:border-[#1A3F75] pt-3">
-                  <div className="font-mono text-[10px] text-stone-400 dark:text-[#8BA3C7] uppercase flex items-center gap-1">
-                    <Calendar className="h-3 w-3 text-stone-500" />
+                <div className="border-t border-[#E1D4C2] dark:border-[#6E473B] pt-3">
+                  <div className="font-mono text-[10px] text-[#A78D78] dark:text-[#BEB5A9] uppercase flex items-center gap-1">
+                    <Calendar className="h-3 w-3 text-[#A78D78]" />
                     Last Read Date
                   </div>
-                  <div className="font-mono text-xs font-semibold text-stone-800 dark:text-[#D4E4EC] mt-0.5">
+                  <div className="font-mono text-xs font-semibold text-[#291C0E] dark:text-[#E1D4C2] mt-0.5">
                     {profile?.last_read_date ? profile.last_read_date : 'No reading session yet'}
                   </div>
                 </div>
@@ -216,26 +218,26 @@ export default function ProfilePage() {
 
           {/* Edit Profile Form */}
           <div className="md:col-span-2">
-            <div className="rounded-xl border border-stone-200 dark:border-[#1A3F75] bg-white/95 dark:bg-[#0A1333] p-5 sm:p-7 shadow-2xs">
-              <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-stone-400 dark:text-[#8BA3C7] block mb-5 border-b border-stone-100 dark:border-[#1A3F75] pb-2">
+            <div className="rounded-xl border border-[#E1D4C2] dark:border-[#6E473B] bg-white/95 dark:bg-[#362215] p-5 sm:p-7 shadow-2xs">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#A78D78] dark:text-[#BEB5A9] block mb-5 border-b border-[#E1D4C2] dark:border-[#6E473B] pb-2">
                 Account Details
               </span>
 
               <form onSubmit={handleSaveProfile} className="space-y-4">
                 <div>
-                  <label className="block font-mono text-xs uppercase tracking-wider text-stone-500 dark:text-[#8BA3C7] mb-1">
+                  <label className="block font-mono text-xs uppercase tracking-wider text-[#6E473B] dark:text-[#BEB5A9] mb-1">
                     Account Email (Read-Only)
                   </label>
                   <input
                     type="email"
                     disabled
                     value={email}
-                    className="w-full rounded-lg border border-stone-200 dark:border-[#1A3F75] bg-stone-50 dark:bg-[#13264D]/50 px-3.5 py-2 font-mono text-xs text-stone-500 dark:text-[#8BA3C7] cursor-not-allowed"
+                    className="w-full rounded-lg border border-[#E1D4C2] dark:border-[#6E473B] bg-stone-50 dark:bg-[#482D1E]/50 px-3.5 py-2 font-mono text-xs text-stone-500 dark:text-[#BEB5A9] cursor-not-allowed"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-mono text-xs uppercase tracking-wider text-stone-600 dark:text-[#D4E4EC] mb-1">
+                  <label className="block font-mono text-xs uppercase tracking-wider text-[#291C0E] dark:text-[#E1D4C2] mb-1">
                     Display Name
                   </label>
                   <input
@@ -244,15 +246,15 @@ export default function ProfilePage() {
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
                     placeholder="e.g. Alex Turing"
-                    className="w-full rounded-lg border border-stone-300 dark:border-[#1A3F75] bg-white dark:bg-[#00002A] text-stone-900 dark:text-[#D4E4EC] px-3.5 py-2 text-xs font-sans focus:border-stone-900 dark:focus:border-amber-400 focus:outline-hidden"
+                    className="w-full rounded-lg border border-[#BEB5A9] dark:border-[#6E473B] bg-white dark:bg-[#291C0E] text-[#291C0E] dark:text-[#E1D4C2] px-3.5 py-2 text-xs font-sans focus:border-[#291C0E] dark:focus:border-amber-400 focus:outline-hidden"
                   />
-                  <p className="font-mono text-[10px] text-stone-400 dark:text-[#8BA3C7] mt-1">
+                  <p className="font-mono text-[10px] text-[#A78D78] dark:text-[#BEB5A9] mt-1">
                     Visible on daily dashboard and briefs.
                   </p>
                 </div>
 
                 <div>
-                  <label className="block font-mono text-xs uppercase tracking-wider text-stone-600 dark:text-[#D4E4EC] mb-1">
+                  <label className="block font-mono text-xs uppercase tracking-wider text-[#291C0E] dark:text-[#E1D4C2] mb-1">
                     System Handle / Username
                   </label>
                   <input
@@ -261,7 +263,7 @@ export default function ProfilePage() {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="e.g. alex_learner"
-                    className="w-full rounded-lg border border-stone-300 dark:border-[#1A3F75] bg-white dark:bg-[#00002A] text-stone-900 dark:text-[#D4E4EC] px-3.5 py-2 text-xs font-mono focus:border-stone-900 dark:focus:border-amber-400 focus:outline-hidden"
+                    className="w-full rounded-lg border border-[#BEB5A9] dark:border-[#6E473B] bg-white dark:bg-[#291C0E] text-[#291C0E] dark:text-[#E1D4C2] px-3.5 py-2 text-xs font-mono focus:border-[#291C0E] dark:focus:border-amber-400 focus:outline-hidden"
                   />
                 </div>
 
@@ -269,7 +271,7 @@ export default function ProfilePage() {
                   <button
                     type="submit"
                     disabled={saving}
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-stone-900 dark:border-[#3B628A] bg-stone-900 dark:bg-[#1A3F75] px-4 py-2 font-mono text-xs font-bold text-white shadow-2xs hover:bg-stone-800 dark:hover:bg-[#13264D] disabled:opacity-50 transition uppercase tracking-wider"
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-[#291C0E] dark:border-[#A78D78] bg-[#291C0E] dark:bg-[#6E473B] px-4 py-2 font-mono text-xs font-bold text-white shadow-2xs hover:bg-[#6E473B] dark:hover:bg-[#482D1E] disabled:opacity-50 transition uppercase tracking-wider"
                   >
                     <Save className="h-3.5 w-3.5" />
                     <span>{saving ? 'Updating...' : 'Save Profile'}</span>

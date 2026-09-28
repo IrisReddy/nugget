@@ -3,28 +3,32 @@
 @variant dark (&:where(.dark, .dark *));
 
 :root {
-  /* Palette 2: Warm Espresso & Parchment (Light Theme) */
+  /* Warm Palette (Light Theme): Last 3 shades (#A78D78, #BEB5A9, #E1D4C2) + Parchment */
   --bg-primary: #FAF7F2;
   --bg-surface: #FFFFFF;
-  --bg-subtle: #F3EDE2;
+  --bg-subtle: #F5EFEB;
   --text-primary: #291C0E;
-  --text-muted: #7A6652;
+  --text-muted: #6E473B;
+  --text-subtle: #A78D78;
   --border-color: #E1D4C2;
-  --border-strong: #6E473B;
-  --grid-line: rgba(41, 28, 14, 0.055);
-  --accent-gold: #C4823F;
+  --border-subtle: #BEB5A9;
+  --border-strong: #A78D78;
+  --grid-line: rgba(110, 71, 59, 0.055);
+  --accent-gold: #D97706;
 }
 
 .dark {
-  /* Palette 1: Midnight & Steel Blue (Dark Theme) */
-  --bg-primary: #00002A;
-  --bg-surface: #0A1333;
-  --bg-subtle: #13264D;
-  --text-primary: #D4E4EC;
-  --text-muted: #8BA3C7;
-  --border-color: #1A3F75;
-  --border-strong: #3B628A;
-  --grid-line: rgba(59, 98, 138, 0.2);
+  /* Warm Palette (Dark Theme): First 3 shades (#291C0E, #6E473B, #A78D78) - Zero Blue Tones */
+  --bg-primary: #291C0E;
+  --bg-surface: #362215;
+  --bg-subtle: #482D1E;
+  --text-primary: #E1D4C2;
+  --text-muted: #BEB5A9;
+  --text-subtle: #A78D78;
+  --border-color: #6E473B;
+  --border-subtle: #553427;
+  --border-strong: #A78D78;
+  --grid-line: rgba(167, 141, 120, 0.12);
   --accent-gold: #F59E0B;
 }
 
